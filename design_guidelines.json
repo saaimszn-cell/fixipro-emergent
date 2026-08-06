@@ -1,0 +1,166 @@
+{
+  "theme": "Light & Dark Mode (Toggle). Archetype: Swiss & High-Contrast (Authority, Clarity, Truth) mixed with Organic warm tones for Trust.",
+  "typography": {
+    "headings": "Cabinet Grotesk (font-bold/font-black for H1/H2) - tracking-tight.",
+    "body": "Satoshi or IBM Plex Sans - leading-relaxed.",
+    "rules": [
+      "No Inter, Roboto, Open Sans for headings.",
+      "Headings > 32px must use tracking-tight.",
+      "Labels must be uppercase, tiny, wide spacing (tracking-[0.2em]).",
+      "Do not exceed text-6xl for Hero H1. Use fluid typography.",
+      "Hierarchy Gap Rule: The jump between heading and subheading must not exceed 2 Tailwind steps."
+    ],
+    "installation": "Add fonts via Google Fonts or Fontshare in index.css"
+  },
+  "colors": {
+    "primary": "Deep Obsidian / Midnight Blue (#0A0A0A or #0F172A) for Trust and Authority",
+    "accent": "Signal Red (#FF3B30) or Electric Blue (#007AFF) for High-contrast actions",
+    "background_light": "#F9F9F8 (Tinted Off-white)",
+    "background_dark": "#0A0A0A (Deep Black)",
+    "rules": [
+      "Never use pure black or pure gray. Always tint neutral grays slightly with blue (cool) or orange (warm).",
+      "95% of UI should be monochrome. Color exists only to guide action.",
+      "Text contrast must meet APCA / WCAG AA standards. Explicitly set text color on hover (e.g. hover:bg-slate-900 hover:text-white).",
+      "Focus states must have HIGHER contrast.",
+      "Do NOT use completely transparent backgrounds for headers, dropdowns, or overlays. Use Glassmorphism (bg-white/70 + backdrop-blur-xl)."
+    ]
+  },
+  "visual_enhancers": {
+    "surfaces": {
+      "headers": "Crystal Glassmorphism (backdrop-blur-xl, bg-white/70 or bg-black/60, saturate-150, 1px delicate inner stroke).",
+      "dashboards": "Flat solid surfaces, subtle 1px border (border-border), no muddy shadows. Hover state: slight lift (-translate-y-1) and shadow-lg.",
+      "modals": "High-end glass or solid background with sharp contrasts."
+    },
+    "shadows": "Ambient + direct layered shadows. Crisp edges via semi-transparent borders.",
+    "borders": "1px solid borders (border-black/5 or border-white/10) to ground soft components."
+  },
+  "grids_and_layouts": {
+    "marketing": {
+      "style": "The 'Tetris' Bento Grid (Asymmetry, Visual Tension).",
+      "config": "grid-cols-1 md:grid-cols-8 lg:grid-cols-12 with wide gaps (gap-8 to gap-12).",
+      "usage": "Use overlapping elements and pure HTML + Tailwind for structure. Do not use generic Shadcn cards for marketing layouts."
+    },
+    "dashboard": {
+      "style": "High Density Grid.",
+      "config": "grid-cols-1 md:grid-cols-3 lg:grid-cols-4 with tight gaps (gap-4 or gap-6).",
+      "usage": "Every pixel utilized. Use h-full on children to match heights."
+    },
+    "spacing": "Generous Spacing: p-6 to p-12. Avoid cramped designs. Containers with borders MUST have internal padding.",
+    "rules": [
+      "Mobile-first responsive always.",
+      "Direct Children Only for grids. If animating, motion.div must be the direct child.",
+      "Optical alignment over geometrical alignment (e.g., extra padding for icons).",
+      "Do not center-align everything. Use left alignment for dense content, paragraphs, and forms."
+    ]
+  },
+  "motion_and_interactions": {
+    "rules": [
+      "Every interaction needs micro-animations (hover states, click states).",
+      "Use specific properties for transitions (e.g. transition: transform 0.2s ease, opacity 0.2s). NO 'transition: all'.",
+      "Entrance animations staggered for lists (using framer-motion).",
+      "Respect prefers-reduced-motion. Meaningful animations should not interfere with keyboard focus."
+    ]
+  },
+  "accessibility": {
+    "rules": [
+      "All interactive elements MUST include data-testid attribute (kebab-case, role-based).",
+      "High contrast focus states.",
+      "Screen-reader friendly tables.",
+      "Proper aria-hidden attributes on decorative elements."
+    ]
+  },
+  "media": {
+    "image_urls": [
+      {
+        "url": "https://images.pexels.com/photos/16509869/pexels-photo-16509869.jpeg",
+        "description": "Worker fixing pipes with tools (industrial indoor)",
+        "category": "hero_or_service_plumbing"
+      },
+      {
+        "url": "https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg",
+        "description": "Close-up of a plumber's hands installing steel pipes",
+        "category": "service_detail_plumbing"
+      },
+      {
+        "url": "https://images.pexels.com/photos/6195274/pexels-photo-6195274.jpeg",
+        "description": "Two women in work clothes cleaning a modern living room",
+        "category": "service_cleaning"
+      },
+      {
+        "url": "https://images.pexels.com/photos/6196684/pexels-photo-6196684.jpeg",
+        "description": "Focused cleaning team in red overalls using vacuum indoors",
+        "category": "about_us_team"
+      },
+      {
+        "url": "https://images.pexels.com/photos/33694016/pexels-photo-33694016.jpeg",
+        "description": "Electrical technician repairing a circuit board with precision tools",
+        "category": "service_detail_electrical"
+      },
+      {
+        "url": "https://images.pexels.com/photos/17018103/pexels-photo-17018103.jpeg",
+        "description": "Electricians wearing safety gear working on power lines",
+        "category": "service_electrical_outdoor"
+      },
+      {
+        "url": "https://images.pexels.com/photos/36990157/pexels-photo-36990157.png",
+        "description": "Picturesque suburban UK house bathed in warm sunlight",
+        "category": "hero_background_marketing"
+      },
+      {
+        "url": "https://images.pexels.com/photos/31671971/pexels-photo-31671971.jpeg",
+        "description": "Elegant brickwork facade with white framed windows in London",
+        "category": "coverage_areas_or_trust_banner"
+      }
+    ],
+    "rules": [
+      "Hero image overlay max opacity: bg-black/50. If the image isn't clearly visible, you are wasting it. Use gradient overlays instead of flat blankets.",
+      "Images MUST NOT exceed 80vh on mobile."
+    ]
+  },
+  "component_strategy": {
+    "marketing": "Use pure HTML + Tailwind CSS (div, section) for layouts to allow overlapping and asymmetry. Use customized Shadcn only for interactive logic (forms, inputs).",
+    "dashboard": "Heavily utilize Shadcn components (tables, calendars, select, dropdowns). Customize spacings and borders to match the brand. Go cardless, flat, rectangular, dense.",
+    "specific_components": {
+      "navigation": "MUST have a visible navigation bar on desktop with Logo + Links + Primary CTA. Do not hide behind a hamburger menu on desktop.",
+      "footer": "Contrast Shift (Light body = Dark Footer). Massive space (py-20 or py-32). Include one massive typographical element.",
+      "toasts": "Use Sonner.",
+      "forms": "Never use native input or select. Always use Shadcn Input/Select/Form.",
+      "icons": "Use lucide-react (default choice)."
+    }
+  },
+  "libraries_and_tools": {
+    "icons": "lucide-react",
+    "animations": "framer-motion",
+    "routing": "react-router-dom",
+    "state_management": "zustand (if needed)"
+  },
+  "instructions_to_main_agent": [
+    "CREATE high-end, DISTINCTIVE frontends. Avoid the generic 'AI slop' aesthetic.",
+    "Ensure all components and pages use standard JavaScript/JSX (.js/.jsx extensions). Do NOT create .tsx or .ts files.",
+    "DO NOT use 'transition: all'. Explicitly define properties.",
+    "DO NOT apply global text-align: center on the App container.",
+    "Create depth with z-index hierarchies and glassmorphism.",
+    "Use modern, sharp or pill-shaped buttons with hover animations.",
+    "Do NOT use placeholder URLs or emojis as icons. Use the provided image URLs.",
+    "Always apply 'data-testid' to interactive elements for testing.",
+    "For the dashboards (Customer, Provider, Admin), ensure high-density layouts with clear navigation hierarchy.",
+    "For the AI & WhatsApp integration hubs, prioritize clean, chat-style interfaces with clear status indicators."
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "You tend to converge toward generic, 'on distribution' outputs. In frontend design, this creates what users call the 'AI slop' aesthetic. Avoid this: make creative, distinctive frontends that surprise and delight.",
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur).",
+    "You MUST NOT apply universal transition. Eg: 'transition: all'. This results in breaking transforms. Always add transitions for specific interactive elements like button, input excluding transforms.",
+    "You MUST NOT center align the app container, ie do not add '.App { text-align: center; }' in the css file. This disrupts the human natural reading flow of text.",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations & color relevant to the app style.",
+    "NEVER: use AI assistant Emoji characters like 🤖🧠💭💡🔮🎯 etc for icons.",
+    "Every interaction needs micro-animations - hover states, transitions, parallax effects, and entrance animations. Static = dead.",
+    "Use 2-3x more spacing than feels comfortable. Cramped designs look cheap.",
+    "Subtle grain textures, noise overlays, custom cursors, selection states, and loading animations: separates good from extraordinary.",
+    "Main agent relies on these image URLs. Missing categories (especially sponsor logos) = main agent will use placeholder text which is FORBIDDEN.",
+    "Prioritize using pre-existing components from src/components/ui when applicable.",
+    "Use `sonner` for toasts. Sonner component are located in `/app/frontend/src/components/ui/sonner.jsx`."
+  ]
+}
