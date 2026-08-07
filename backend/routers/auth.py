@@ -74,6 +74,7 @@ async def register(body: RegisterIn, response: Response):
     user = await db.users.find_one({"_id": res.inserted_id})
     set_auth_cookies(response, create_access_token(str(res.inserted_id), email, body.role),
                      create_refresh_token(str(res.inserted_id)))
+    response.set_cookie(key="sh_auth", value="1", httponly=False, secure=True, samesite="none", max_age=604800, path="/")
     await audit(str(res.inserted_id), "register", "user", str(res.inserted_id))
     return user_out(user)
 
@@ -93,6 +94,7 @@ async def login(body: LoginIn, request: Request, response: Response):
     await db.login_attempts.delete_many({"identifier": identifier})
     uid = str(user["_id"])
     set_auth_cookies(response, create_access_token(uid, email, user["role"]), create_refresh_token(uid))
+    response.set_cookie(key="sh_auth", value="1", httponly=False, secure=True, samesite="none", max_age=604800, path="/")
     return user_out(user)
 
 
@@ -144,6 +146,7 @@ async def google_session(body: dict, response: Response):
     })
     response.set_cookie(key="session_token", value=data["session_token"], httponly=True,
                         secure=True, samesite="none", max_age=604800, path="/")
+    response.set_cookie(key="sh_auth", value="1", httponly=False, secure=True, samesite="none", max_age=604800, path="/")
     return user_out(user)
 
 
@@ -155,6 +158,7 @@ async def logout(request: Request, response: Response):
     response.delete_cookie("access_token", path="/")
     response.delete_cookie("refresh_token", path="/")
     response.delete_cookie("session_token", path="/")
+    response.delete_cookie("sh_auth", path="/")
     return {"ok": True}
 
 

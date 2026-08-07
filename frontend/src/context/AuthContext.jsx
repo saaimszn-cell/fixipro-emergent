@@ -13,6 +13,10 @@ export function AuthProvider({ children }) {
       setLoading(false);
       return;
     }
+    if (!document.cookie.includes("sh_auth=")) {
+      setLoading(false);
+      return;
+    }
     api.get("/auth/me")
       .then((res) => setUser(res.data))
       .catch(() => setUser(null))
