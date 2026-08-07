@@ -72,30 +72,59 @@ export function HowItWorks() {
 export function Pricing() {
   const navigate = useNavigate();
   return (
-    <div data-testid="pricing-page">
-      <Hero kicker="Transparent pricing" title="Simple, honest fees" sub="No subscriptions for customers. No hidden charges. Ever." testid="pricing-hero" />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-20 grid md:grid-cols-2 gap-6">
-        <div className="border border-border bg-card p-8 sm:p-10" data-testid="pricing-customers">
+    <div data-testid="pricing-page" className="relative overflow-hidden">
+      <div className="section-tint relative">
+        <div className="absolute inset-0 pointer-events-none" data-testid="pricing-spline-bg" aria-hidden="true">
+          <iframe src="https://my.spline.design/thebatmanlogocopy-JbnGxqP5R7C71Z7wcxrIV5Zo/" title="FixiPro 3D emblem"
+            className="w-full h-full border-0 opacity-30" loading="lazy" />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#EFF6FF]/50 to-[#EFF6FF] pointer-events-none" />
+        <div className="relative">
+          <Hero kicker="Pricing" title="Free for customers. Fair for handymen." sub="Customers never pay to use FixiPro — just sign up. Handymen pay a simple 15% commission on profit, because we bring you the customers." testid="pricing-hero" />
+        </div>
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-10 grid md:grid-cols-2 gap-6">
+        <div className="border border-border bg-card p-8 sm:p-10 rounded-2xl soft-card" data-testid="pricing-customers">
           <p className="label-caps text-accent">Customers</p>
           <p className="font-display font-black text-5xl mt-3">£0</p>
-          <p className="text-sm text-muted-foreground mt-1">to join, post and compare quotes</p>
+          <p className="text-sm text-muted-foreground mt-1">Just sign up — it's free, forever.</p>
           <ul className="mt-6 space-y-3 text-sm">
-            {["Unlimited job posts", "Compare unlimited quotes", "Pay only the quote you accept", "Secure Stripe checkout with receipts", "Free cancellations before work starts"].map((f) => (
+            {["Free forever — just create an account", "Post unlimited jobs", "Compare custom quotes as they arrive live", "Pay only the quote you accept, securely by card", "Free cancellation before work starts"].map((f) => (
               <li key={f} className="flex gap-2"><BadgeCheck className="h-4 w-4 text-accent shrink-0 mt-0.5" /> {f}</li>
             ))}
           </ul>
-          <Button data-testid="pricing-customer-cta" onClick={() => navigate("/register")} className="mt-8 w-full rounded-2xl h-11 bg-accent hover:bg-accent/90 text-white">Start free</Button>
+          <Button data-testid="pricing-customer-cta" onClick={() => navigate("/register")} className="mt-8 w-full rounded-full h-11 bg-accent hover:bg-accent/90 text-white">Sign up free</Button>
         </div>
-        <div className="border-2 border-primary bg-card p-8 sm:p-10" data-testid="pricing-providers">
+        <div className="border-2 border-primary bg-card p-8 sm:p-10 rounded-2xl soft-card" data-testid="pricing-providers">
           <p className="label-caps text-muted-foreground">Handymen</p>
           <p className="font-display font-black text-5xl mt-3">15%</p>
-          <p className="text-sm text-muted-foreground mt-1">platform commission on completed jobs only — you keep 85%</p>
+          <p className="text-sm text-muted-foreground mt-1">commission on your profit from completed jobs — we provide the customers</p>
           <ul className="mt-6 space-y-3 text-sm">
-            {["Free to join and get verified", "No monthly subscription", "AI-assisted quote writing", "Wallet with same-week withdrawals", "Reviews that build your reputation"].map((f) => (
+            {["Free to join and get verified", "No subscription — pay only when you earn", "Customers matched to your skills and area", "You keep 85% of every agreed quote", "Wallet payouts from £10, any time"].map((f) => (
               <li key={f} className="flex gap-2"><BadgeCheck className="h-4 w-4 text-accent shrink-0 mt-0.5" /> {f}</li>
             ))}
           </ul>
-          <Button data-testid="pricing-provider-cta" onClick={() => navigate("/become-provider")} variant="outline" className="mt-8 w-full rounded-2xl h-11">Become a Handyman</Button>
+          <Button data-testid="pricing-provider-cta" onClick={() => navigate("/become-provider")} variant="outline" className="mt-8 w-full rounded-full h-11">Become a Handyman</Button>
+        </div>
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-20">
+        <div className="border border-border bg-card rounded-2xl soft-card p-8 sm:p-10" data-testid="commission-explainer">
+          <p className="label-caps text-accent">How the money flows</p>
+          <h2 className="font-display font-extrabold text-2xl sm:text-3xl tracking-tight mt-2">One agreed price. One transparent split.</h2>
+          <div className="grid sm:grid-cols-4 gap-4 mt-8">
+            {[
+              { n: "1", t: "Handyman quotes £140", d: "A custom quote for your exact job — no price lists." },
+              { n: "2", t: "You accept & pay £140", d: "The accepted quote is the agreed price. Secure Stripe checkout." },
+              { n: "3", t: "Handyman receives £119", d: "85% of the agreed price lands in their wallet on completion." },
+              { n: "4", t: "FixiPro keeps £21", d: "Our 15% commission for bringing you together — nothing more." },
+            ].map((s) => (
+              <div key={s.n} className="border border-border rounded-2xl p-5">
+                <p className="font-display font-black text-2xl text-accent">{s.n}</p>
+                <p className="font-semibold text-sm mt-2">{s.t}</p>
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{s.d}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

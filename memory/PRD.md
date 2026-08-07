@@ -40,6 +40,7 @@ Complete marketplace website (development + internal testing only; excludes live
 - Live quoting: fixed prices removed from public pages; custom handyman quotes; customer request detail polls every 4s with Live indicator + toast on new quotes
 - Commission: 15% platform fee (was 10%) — earnings view shows Agreed price / FixiPro fee (15%) / Your payout (85%)
 - Contact page: clickable mailto:hello.fixipro@gmail.com + tel:+447538624492 cards, Spline 3D background (spline-viewer, official demo scene), framer-motion depth animations
+- Pricing page rebuilt: £0/free-forever for customers ("just sign up"), 15% commission-on-profit for handymen ("we bring you the customers"), 4-step money-flow explainer (£140 → £119 handyman / £21 FixiPro), Batman-logo Spline scene (my.spline.design/thebatmanlogocopy-JbnGxqP5R7C71Z7wcxrIV5Zo) as hero backdrop
 - Support email setting + DB updated to hello.fixipro@gmail.com
 - Lesson: avoid parallel edits to the same file (race clobbered PublicLayout NAV once — fixed)
 
