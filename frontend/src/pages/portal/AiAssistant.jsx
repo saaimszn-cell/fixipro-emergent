@@ -108,7 +108,7 @@ export default function AiAssistant({ assistant = "customer" }) {
           <div className="p-4 border-b border-border flex items-center gap-2">
             <span className="h-8 w-8 bg-primary text-primary-foreground flex items-center justify-center"><Bot className="h-4 w-4" /></span>
             <div>
-              <p className="font-semibold text-sm">ServiceHub Assistant</p>
+              <p className="font-semibold text-sm">FixiPro Assistant</p>
               <p className="text-xs text-muted-foreground flex items-center gap-1.5">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse-dot" /> Online
               </p>

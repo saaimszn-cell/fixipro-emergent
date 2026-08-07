@@ -4,7 +4,7 @@ import api from "../../lib/api";
 import { Button } from "../../components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../components/ui/accordion";
 import { motion } from "framer-motion";
-import { ArrowRight, BadgeCheck, CreditCard, FileText, MapPin, Search, ShieldCheck, Star, UserCheck, Wallet, CalendarClock, TrendingUp } from "lucide-react";
+import { ArrowRight, BadgeCheck, CheckCircle2, CreditCard, FileText, MapPin, Search, ShieldCheck, Star, UserCheck, Wallet, CalendarClock, TrendingUp } from "lucide-react";
 
 function Hero({ kicker, title, sub, testid }) {
   return (
@@ -20,14 +20,14 @@ export function HowItWorks() {
   const navigate = useNavigate();
   return (
     <div data-testid="how-it-works-page">
-      <Hero kicker="The process" title="How ServiceHub works" sub="From leaky tap to five-star review in three steps — for customers and professionals alike." testid="hiw-hero" />
+      <Hero kicker="The process" title="How FixiPro works" sub="From leaky tap to five-star review in three steps — for customers and handymen alike." testid="hiw-hero" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-20 grid lg:grid-cols-2 gap-12">
         <div>
           <h2 className="font-display font-bold text-2xl mb-6">For customers</h2>
           {[
             { icon: FileText, t: "Post your job", d: "Describe the work, add photos in your head, set your postcode and preferred date." },
-            { icon: Search, t: "Get matched", d: "Our AI matching notifies verified professionals covering your area and trade." },
-            { icon: CreditCard, t: "Accept & pay", d: "Compare quotes side by side, chat with pros, then pay securely by card." },
+            { icon: Search, t: "Get matched", d: "Our AI matching notifies verified handymen covering your area and trade." },
+            { icon: CreditCard, t: "Accept & pay", d: "Compare live quotes side by side, chat with handymen, then pay securely by card." },
             { icon: Star, t: "Review the work", d: "Rate your experience — reviews keep the marketplace honest." },
           ].map((s, i) => (
             <motion.div key={s.t} initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
@@ -39,16 +39,16 @@ export function HowItWorks() {
               </div>
             </motion.div>
           ))}
-          <Button data-testid="hiw-post-job" onClick={() => navigate("/register")} className="mt-6 rounded-none bg-accent hover:bg-accent/90 text-white h-11">
+          <Button data-testid="hiw-post-job" onClick={() => navigate("/register")} className="mt-6 rounded-2xl bg-accent hover:bg-accent/90 text-white h-11">
             Post a job <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
         <div>
-          <h2 className="font-display font-bold text-2xl mb-6">For professionals</h2>
+          <h2 className="font-display font-bold text-2xl mb-6">For handymen</h2>
           {[
             { icon: UserCheck, t: "Get verified", d: "Upload ID, insurance and certifications. Approval typically within 48 hours." },
             { icon: CalendarClock, t: "Set your availability", d: "Control your calendar and the areas you cover." },
-            { icon: FileText, t: "Quote on local jobs", d: "Browse requests matched to your trade and send competitive quotes — AI can help draft them." },
+            { icon: FileText, t: "Quote on local jobs", d: "Browse requests matched to your trade and send competitive custom quotes — AI can help draft them." },
             { icon: Wallet, t: "Get paid", d: "Earnings land in your wallet on completion. Withdraw any time over £10." },
           ].map((s, i) => (
             <motion.div key={s.t} initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
@@ -60,8 +60,8 @@ export function HowItWorks() {
               </div>
             </motion.div>
           ))}
-          <Button data-testid="hiw-join-provider" variant="outline" onClick={() => navigate("/become-provider")} className="mt-6 rounded-none h-11">
-            Join as a provider <ArrowRight className="ml-2 h-4 w-4" />
+          <Button data-testid="hiw-join-provider" variant="outline" onClick={() => navigate("/become-provider")} className="mt-6 rounded-2xl h-11">
+            Join as a handyman <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </div>
@@ -84,18 +84,18 @@ export function Pricing() {
               <li key={f} className="flex gap-2"><BadgeCheck className="h-4 w-4 text-accent shrink-0 mt-0.5" /> {f}</li>
             ))}
           </ul>
-          <Button data-testid="pricing-customer-cta" onClick={() => navigate("/register")} className="mt-8 w-full rounded-none h-11 bg-accent hover:bg-accent/90 text-white">Start free</Button>
+          <Button data-testid="pricing-customer-cta" onClick={() => navigate("/register")} className="mt-8 w-full rounded-2xl h-11 bg-accent hover:bg-accent/90 text-white">Start free</Button>
         </div>
         <div className="border-2 border-primary bg-card p-8 sm:p-10" data-testid="pricing-providers">
-          <p className="label-caps text-muted-foreground">Professionals</p>
-          <p className="font-display font-black text-5xl mt-3">10%</p>
-          <p className="text-sm text-muted-foreground mt-1">service fee on completed jobs only</p>
+          <p className="label-caps text-muted-foreground">Handymen</p>
+          <p className="font-display font-black text-5xl mt-3">15%</p>
+          <p className="text-sm text-muted-foreground mt-1">platform commission on completed jobs only — you keep 85%</p>
           <ul className="mt-6 space-y-3 text-sm">
             {["Free to join and get verified", "No monthly subscription", "AI-assisted quote writing", "Wallet with same-week withdrawals", "Reviews that build your reputation"].map((f) => (
               <li key={f} className="flex gap-2"><BadgeCheck className="h-4 w-4 text-accent shrink-0 mt-0.5" /> {f}</li>
             ))}
           </ul>
-          <Button data-testid="pricing-provider-cta" onClick={() => navigate("/become-provider")} variant="outline" className="mt-8 w-full rounded-none h-11">Become a provider</Button>
+          <Button data-testid="pricing-provider-cta" onClick={() => navigate("/become-provider")} variant="outline" className="mt-8 w-full rounded-2xl h-11">Become a Handyman</Button>
         </div>
       </div>
     </div>
@@ -132,7 +132,7 @@ export function FaqPage() {
 export function About() {
   return (
     <div data-testid="about-page">
-      <Hero kicker="Our story" title="Built for British homes" sub="ServiceHub started with a simple frustration: finding a trustworthy tradesperson shouldn't take a week of phone calls." testid="about-hero" />
+      <Hero kicker="Our story" title="Built for British homes" sub="FixiPro started with a simple frustration: finding a trustworthy handyman shouldn't take a week of phone calls." testid="about-hero" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-20 grid lg:grid-cols-12 gap-10 items-start">
         <div className="lg:col-span-7 space-y-5 text-muted-foreground leading-relaxed">
           <p>We verify every professional's identity, insurance and qualifications before they can quote on a single job. We hold payment securely until you're happy. And we publish every review — good or bad.</p>
@@ -146,7 +146,7 @@ export function About() {
             ))}
           </div>
         </div>
-        <img src="https://images.pexels.com/photos/6196684/pexels-photo-6196684.jpeg" alt="The ServiceHub team at work"
+        <img src="https://images.pexels.com/photos/6196684/pexels-photo-6196684.jpeg" alt="The FixiPro team at work"
           className="lg:col-span-5 w-full h-80 object-cover border border-black/5" />
       </div>
     </div>
@@ -174,7 +174,7 @@ export function Coverage() {
             <p className="text-muted-foreground mt-2">We're expanding fast. Register anyway — we'll notify you the moment pros go live in your area.</p>
           </div>
           <div className="lg:col-span-4 lg:text-right">
-            <Link to="/contact"><Button data-testid="coverage-contact-cta" className="rounded-none bg-accent hover:bg-accent/90 text-white">Request your area</Button></Link>
+            <Link to="/contact"><Button data-testid="coverage-contact-cta" className="rounded-2xl bg-accent hover:bg-accent/90 text-white">Request your area</Button></Link>
           </div>
         </div>
       </div>
@@ -215,20 +215,20 @@ export function BecomeProvider() {
   const navigate = useNavigate();
   return (
     <div data-testid="become-provider-page">
-      <Hero kicker="For professionals" title="Win local work, on your terms" sub="Free to join. No subscription. Just a steady stream of jobs in the areas you choose." testid="bp-hero" />
+      <Hero kicker="For handymen" title="Win local work, on your terms" sub="Free to join. No subscription. Just a steady stream of jobs in the areas you choose." testid="bp-hero" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-20">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <h2 className="font-display font-extrabold text-2xl sm:text-3xl tracking-tight mb-6">Why join FixiPro?</h2>
+        <div className="grid sm:grid-cols-2 gap-4">
           {[
-            { icon: TrendingUp, t: "Steady job flow", d: "Requests matched to your trade and coverage areas land in your feed daily." },
-            { icon: Wallet, t: "Fast payouts", d: "Money hits your wallet on completion. Withdraw from £10, any time." },
-            { icon: ShieldCheck, t: "Verification badge", d: "Stand out with our vetted badge after a one-time document check." },
-            { icon: Star, t: "Build reputation", d: "Verified reviews turn good work into more work." },
-          ].map((f, i) => (
-            <motion.div key={f.t} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.07 }}
-              className="border border-border bg-card p-6">
-              <f.icon className="h-6 w-6 text-accent" />
-              <p className="font-display font-bold mt-3">{f.t}</p>
-              <p className="text-sm text-muted-foreground mt-2 leading-relaxed">{f.d}</p>
+            "Qualified leads matched to your skills and coverage area",
+            "Professional profile with reviews and verification badges",
+            "Transparent quoting and secure payment workflow",
+            "Tools to manage jobs, availability, and customer communication",
+          ].map((t, i) => (
+            <motion.div key={t} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.07 }}
+              className="border border-border bg-card p-5 rounded-2xl flex items-center gap-3 soft-card">
+              <CheckCircle2 className="h-5 w-5 text-accent shrink-0" />
+              <p className="text-sm font-medium">{t}</p>
             </motion.div>
           ))}
         </div>
@@ -238,7 +238,7 @@ export function BecomeProvider() {
             <p className="text-slate-400 mt-3 max-w-xl">Create your account, upload your insurance and certificates, and start quoting. Most pros are approved within 48 hours.</p>
           </div>
           <div className="lg:col-span-4 lg:text-right">
-            <Button data-testid="bp-register-cta" onClick={() => navigate("/register")} className="rounded-none h-12 px-8 bg-accent hover:bg-accent/90 text-white">
+            <Button data-testid="bp-register-cta" onClick={() => navigate("/register")} className="rounded-2xl h-12 px-8 bg-accent hover:bg-accent/90 text-white">
               Join free today <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
@@ -254,7 +254,7 @@ export function ComingSoon() {
       <p className="label-caps text-accent flex items-center gap-2"><span className="h-2 w-2 bg-accent animate-pulse-dot" /> In the works</p>
       <h1 className="font-display font-black text-4xl sm:text-5xl tracking-tight mt-3">Coming soon</h1>
       <p className="text-muted-foreground mt-4 max-w-md">This section is being polished for launch. The rest of the marketplace is fully functional — take a look around.</p>
-      <Link to="/"><Button data-testid="cs-home-btn" className="mt-8 rounded-none bg-accent hover:bg-accent/90 text-white">Back home</Button></Link>
+      <Link to="/"><Button data-testid="cs-home-btn" className="mt-8 rounded-2xl bg-accent hover:bg-accent/90 text-white">Back home</Button></Link>
     </div>
   );
 }

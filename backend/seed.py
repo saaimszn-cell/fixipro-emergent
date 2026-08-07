@@ -48,38 +48,38 @@ FAQS = [
 BLOG_POSTS = [
     {"title": "10 questions to ask before hiring a plumber", "slug": "questions-before-hiring-plumber",
      "excerpt": "Avoid cowboys and costly surprises with these essential questions.",
-     "content": "Hiring a plumber is about trust. Ask about Gas Safe registration, insurance, written quotes, guarantees on workmanship, and references. A professional will happily answer all of these. On ServiceHub, every plumber is pre-vetted so you can skip the guesswork.",
-     "image": "https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg", "author": "ServiceHub Editorial"},
+     "content": "Hiring a plumber is about trust. Ask about Gas Safe registration, insurance, written quotes, guarantees on workmanship, and references. A professional will happily answer all of these. On FixiPro, every plumber is pre-vetted so you can skip the guesswork.",
+     "image": "https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg", "author": "FixiPro Editorial"},
     {"title": "The true cost of an end-of-tenancy clean in 2026", "slug": "end-of-tenancy-clean-cost-2026",
      "excerpt": "What landlords expect, what it costs, and how to get your deposit back.",
      "content": "End-of-tenancy cleans typically range from £150 to £300 depending on property size. Professional cleaning with a checklist aligned to letting agent standards dramatically improves your chances of a full deposit return.",
-     "image": "https://images.pexels.com/photos/6195274/pexels-photo-6195274.jpeg", "author": "ServiceHub Editorial"},
+     "image": "https://images.pexels.com/photos/6195274/pexels-photo-6195274.jpeg", "author": "FixiPro Editorial"},
     {"title": "EV chargers at home: what UK homeowners need to know", "slug": "ev-chargers-at-home-uk-guide",
      "excerpt": "Grants, installation costs and choosing the right charger for your driveway.",
      "content": "Home EV charger installation in the UK typically costs £800-£1,200 including the unit. Always use an OZEV-approved installer and check your fuse board capacity first.",
-     "image": "https://images.pexels.com/photos/17018103/pexels-photo-17018103.jpeg", "author": "ServiceHub Editorial"},
+     "image": "https://images.pexels.com/photos/17018103/pexels-photo-17018103.jpeg", "author": "FixiPro Editorial"},
 ]
 
 CMS_PAGES = [
     {"slug": "privacy-policy", "title": "Privacy Policy",
-     "content": "We collect only the data needed to operate the marketplace: account details, job information and payment records processed by Stripe. We never sell your data. You may request a copy or deletion of your data at any time via your account settings or by contacting privacy@example.co.uk."},
+     "content": "We collect only the data needed to operate the marketplace: account details, job information and payment records processed by Stripe. We never sell your data. You may request a copy or deletion of your data at any time via your account settings or by contacting privacy@fixipro.co.uk."},
     {"slug": "terms", "title": "Terms & Conditions",
-     "content": "ServiceHub is a marketplace connecting customers with independent service providers. Quotes are provided by professionals, not ServiceHub. Payment is taken on quote acceptance and work is guaranteed under our workmanship promise. Disputes are handled through our resolution centre."},
+     "content": "FixiPro is a marketplace connecting customers with independent service providers. Quotes are provided by professionals, not FixiPro. Payment is taken on quote acceptance and work is guaranteed under our workmanship promise. Disputes are handled through our resolution centre."},
     {"slug": "cookies", "title": "Cookie Policy",
      "content": "We use essential cookies for authentication and security, plus optional analytics cookies to improve the product. You can manage preferences at any time."},
     {"slug": "accessibility", "title": "Accessibility Statement",
-     "content": "We are committed to WCAG 2.1 AA compliance. If you encounter any accessibility barriers, contact accessibility@example.co.uk and we will resolve them promptly."},
+     "content": "We are committed to WCAG 2.1 AA compliance. If you encounter any accessibility barriers, contact accessibility@fixipro.co.uk and we will resolve them promptly."},
 ]
 
 EMAIL_TEMPLATES = [
-    {"name": "welcome", "subject": "Welcome to ServiceHub", "body": "Hi {{name}}, welcome aboard. Post your first job and get quotes in minutes.", "channel": "email"},
+    {"name": "welcome", "subject": "Welcome to FixiPro", "body": "Hi {{name}}, welcome aboard. Post your first job and get quotes in minutes.", "channel": "email"},
     {"name": "quote_received", "subject": "You have a new quote", "body": "Hi {{name}}, {{provider}} quoted £{{amount}} on your job '{{job}}'.", "channel": "email"},
     {"name": "job_completed", "subject": "Job marked complete", "body": "Hi {{name}}, your job '{{job}}' is complete. Please leave a review.", "channel": "email"},
 ]
 
 SMS_TEMPLATES = [
-    {"name": "quote_received_sms", "subject": "", "body": "ServiceHub: new quote of £{{amount}} for '{{job}}'. View: {{link}}", "channel": "sms"},
-    {"name": "booking_reminder", "subject": "", "body": "ServiceHub: reminder — {{provider}} arrives {{date}} for '{{job}}'.", "channel": "sms"},
+    {"name": "quote_received_sms", "subject": "", "body": "FixiPro: new quote of £{{amount}} for '{{job}}'. View: {{link}}", "channel": "sms"},
+    {"name": "booking_reminder", "subject": "", "body": "FixiPro: reminder — {{provider}} arrives {{date}} for '{{job}}'.", "channel": "sms"},
 ]
 
 PUSH_TEMPLATES = [
@@ -89,13 +89,13 @@ PUSH_TEMPLATES = [
 
 AI_CONFIGS = [
     {"key": "customer_assistant", "name": "Customer AI Assistant", "model": "gpt-5.4", "enabled": True,
-     "system_prompt": "You are ServiceHub's customer assistant for a UK home services marketplace. Help customers describe their job, understand pricing, and navigate booking. Be concise, friendly, British English."},
+     "system_prompt": "You are FixiPro's customer assistant for a UK home services marketplace. Help customers describe their job, understand pricing, and navigate booking. Be concise, friendly, British English."},
     {"key": "provider_assistant", "name": "Provider AI Assistant", "model": "gpt-5.4", "enabled": True,
-     "system_prompt": "You are ServiceHub's provider assistant. Help tradespeople write winning quotes, price jobs fairly for the UK market, and manage their schedule. Be concise and practical."},
+     "system_prompt": "You are FixiPro's provider assistant. Help handymen write winning quotes, price jobs fairly for the UK market, and manage their schedule. Be concise and practical."},
     {"key": "admin_assistant", "name": "Admin AI Assistant", "model": "gpt-5.4", "enabled": True,
-     "system_prompt": "You are ServiceHub's admin assistant. Summarise platform activity, flag anomalies, and help draft announcements. Be precise."},
+     "system_prompt": "You are FixiPro's admin assistant. Summarise platform activity, flag anomalies, and help draft announcements. Be precise."},
     {"key": "whatsapp_assistant", "name": "WhatsApp AI Assistant", "model": "gpt-5.4", "enabled": True,
-     "system_prompt": "You are ServiceHub's WhatsApp assistant. Qualify leads, answer FAQs, collect job details for quotes, and hand over to a human when asked. Short messages."},
+     "system_prompt": "You are FixiPro's WhatsApp assistant. Qualify leads, answer FAQs, collect job details for quotes, and hand over to a human when asked. Short messages."},
 ]
 
 COVERAGE = ["London", "Birmingham", "Manchester", "Leeds", "Liverpool", "Bristol", "Sheffield",
@@ -169,7 +169,7 @@ async def seed_content():
             await db.blog_posts.insert_one({**p, "published": True, "created_at": now()})
     if await db.cms_pages.count_documents({}) == 0:
         for p in CMS_PAGES:
-            await db.cms_pages.insert_one({**p, "seo_title": p["title"] + " | ServiceHub",
+            await db.cms_pages.insert_one({**p, "seo_title": p["title"] + " | FixiPro",
                                            "seo_desc": p["content"][:150], "updated_at": now()})
     if await db.faqs.count_documents({}) == 0:
         for f in FAQS:
@@ -182,9 +182,9 @@ async def seed_content():
         await db.ai_configs.insert_many(AI_CONFIGS)
     if await db.settings.count_documents({}) == 0:
         await db.settings.insert_many([
-            {"key": "platform_fee_pct", "value": 10},
-            {"key": "site_name", "value": "ServiceHub"},
-            {"key": "support_email", "value": "support@example.co.uk"},
+            {"key": "platform_fee_pct", "value": 15},
+            {"key": "site_name", "value": "FixiPro"},
+            {"key": "support_email", "value": "support@fixipro.co.uk"},
             {"key": "maintenance_mode", "value": False},
             {"key": "coverage_cities", "value": COVERAGE},
         ])

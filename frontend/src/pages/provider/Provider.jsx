@@ -213,7 +213,7 @@ export function Earnings() {
 
   return (
     <div data-testid="earnings-page">
-      <PageHeader title="Earnings & wallet" sub="10% platform fee is deducted per completed job.">
+      <PageHeader title="Earnings & wallet" sub="15% platform commission is deducted per completed job — payouts shown are your 85%.">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild><Button data-testid="withdraw-btn" className="rounded-none bg-accent hover:bg-accent/90 text-white">Withdraw</Button></DialogTrigger>
           <DialogContent>
@@ -237,7 +237,7 @@ export function Earnings() {
       {!data || data.entries.length === 0 ? <EmptyState title="No earnings yet" hint="Completed jobs pay out here automatically." /> : (
         <div className="border border-border bg-card overflow-x-auto">
           <Table>
-            <TableHeader><TableRow><TableHead>Job</TableHead><TableHead>Gross</TableHead><TableHead>Fee</TableHead><TableHead>Net</TableHead><TableHead>Date</TableHead></TableRow></TableHeader>
+            <TableHeader><TableRow><TableHead>Job</TableHead><TableHead>Agreed price</TableHead><TableHead>FixiPro fee (15%)</TableHead><TableHead>Your payout</TableHead><TableHead>Date</TableHead></TableRow></TableHeader>
             <TableBody>
               {data.entries.map((e) => (
                 <TableRow key={e.id} data-testid={`earning-${e.id}`}>

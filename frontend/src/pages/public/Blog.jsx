@@ -13,7 +13,7 @@ export function BlogList() {
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
         {posts.map((p) => (
           <Link key={p.slug} to={`/blog/${p.slug}`} data-testid={`blog-card-${p.slug}`}
-            className="group border border-border bg-card overflow-hidden transition-[transform,box-shadow] duration-200 hover:-translate-y-1 hover:shadow-lg">
+            className="group border border-border bg-card rounded-2xl overflow-hidden transition-[transform,box-shadow] duration-200 hover:-translate-y-1 hover:shadow-lg">
             <div className="h-48 overflow-hidden">
               <img src={p.image} alt={p.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
             </div>
@@ -50,7 +50,7 @@ export function BlogPost() {
       </Link>
       <h1 className="font-display font-extrabold text-3xl sm:text-4xl tracking-tight mt-6 leading-tight">{post.title}</h1>
       <p className="text-sm text-muted-foreground mt-3">{fmtDate(post.created_at)} · {post.author}</p>
-      <img src={post.image} alt={post.title} className="w-full h-64 sm:h-96 object-cover border border-black/5 mt-8" />
+      <img src={post.image} alt={post.title} className="w-full h-64 sm:h-96 object-cover border border-black/5 rounded-2xl mt-8" />
       <div className="mt-8 text-base sm:text-lg text-muted-foreground leading-relaxed space-y-4">
         {post.content.split("\n").map((p, i) => <p key={i}>{p}</p>)}
       </div>

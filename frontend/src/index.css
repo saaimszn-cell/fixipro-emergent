@@ -6,7 +6,7 @@
 
 @layer base {
     :root {
-        --background: 30 8% 97.5%;
+        --background: 0 0% 100%;
         --foreground: 222 47% 11%;
         --card: 0 0% 100%;
         --card-foreground: 222 47% 11%;
@@ -18,19 +18,19 @@
         --secondary-foreground: 222 47% 11%;
         --muted: 220 14% 94%;
         --muted-foreground: 220 9% 42%;
-        --accent: 3 100% 59%;
+        --accent: 221 83% 53%;
         --accent-foreground: 0 0% 100%;
         --destructive: 0 84.2% 60.2%;
         --destructive-foreground: 0 0% 98%;
         --border: 220 13% 89%;
         --input: 220 13% 89%;
-        --ring: 222 47% 11%;
+        --ring: 221 83% 53%;
         --chart-1: 222 47% 25%;
-        --chart-2: 3 100% 59%;
+        --chart-2: 221 83% 53%;
         --chart-3: 174 62% 32%;
         --chart-4: 43 74% 52%;
         --chart-5: 220 14% 60%;
-        --radius: 0.5rem;
+        --radius: 0.75rem;
     }
     .dark {
         --background: 225 30% 5%;
@@ -45,7 +45,7 @@
         --secondary-foreground: 40 20% 96%;
         --muted: 225 20% 14%;
         --muted-foreground: 220 9% 60%;
-        --accent: 3 100% 62%;
+        --accent: 217 91% 60%;
         --accent-foreground: 0 0% 100%;
         --destructive: 0 62.8% 45%;
         --destructive-foreground: 0 0% 98%;
@@ -99,6 +99,24 @@
     text-transform: uppercase;
     letter-spacing: 0.2em;
     font-weight: 700;
+}
+
+.section-tint {
+    background-color: #EFF6FF;
+}
+.dark .section-tint {
+    background-color: rgba(37, 99, 235, 0.08);
+}
+
+.hero-gradient {
+    background: linear-gradient(180deg, #EFF6FF 0%, #ffffff 75%);
+}
+.dark .hero-gradient {
+    background: linear-gradient(180deg, rgba(37, 99, 235, 0.12) 0%, transparent 75%);
+}
+
+.soft-card {
+    box-shadow: 0 10px 40px -12px rgba(15, 23, 42, 0.12);
 }
 
 .grain-overlay {

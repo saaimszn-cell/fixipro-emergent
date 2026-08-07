@@ -11,7 +11,7 @@ from core import db, client
 from seed import run_seed
 from routers import auth, catalog, requests as requests_router, payments, engagement, provider, admin, ai, comms
 
-app = FastAPI(title="ServiceHub API")
+app = FastAPI(title="FixiPro API")
 
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
 
@@ -28,7 +28,7 @@ app.include_router(comms.router, prefix="/api")
 
 @app.get("/api/")
 async def root():
-    return {"message": "ServiceHub API", "status": "ok"}
+    return {"message": "FixiPro API", "status": "ok"}
 
 
 @app.get("/api/health")

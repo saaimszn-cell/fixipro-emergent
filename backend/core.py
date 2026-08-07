@@ -16,7 +16,7 @@ client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ["DB_NAME"]]
 
 JWT_ALGORITHM = "HS256"
-PLATFORM_FEE_PCT = 10.0
+PLATFORM_FEE_PCT = 15.0
 
 PyObjectId = Annotated[str, BeforeValidator(str)]
 

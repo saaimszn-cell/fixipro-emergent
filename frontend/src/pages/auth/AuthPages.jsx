@@ -26,7 +26,7 @@ function AuthShell({ title, sub, children, testid }) {
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/20 to-transparent" />
         <div className="absolute bottom-12 left-12 right-12 text-white">
           <p className="label-caps text-white/60">Trusted across the UK</p>
-          <p className="font-display font-bold text-2xl mt-2 max-w-sm">Vetted professionals for every corner of your home.</p>
+          <p className="font-display font-bold text-2xl mt-2 max-w-sm">Vetted handymen for every corner of your home.</p>
         </div>
       </div>
     </div>
@@ -120,7 +120,7 @@ export function Login() {
         <div className="space-y-2">
           <Label htmlFor="email" className="label-caps">Email</Label>
           <Input data-testid="login-email" id="email" type="email" required autoComplete="email"
-            value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="rounded-none h-11" />
+            value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="rounded-2xl h-11" />
         </div>
         <div className="space-y-2">
           <div className="flex justify-between items-center">
@@ -128,15 +128,15 @@ export function Login() {
             <Link to="/forgot-password" data-testid="forgot-password-link" className="text-xs text-accent hover:underline">Forgot password?</Link>
           </div>
           <Input data-testid="login-password" id="password" type="password" required autoComplete="current-password"
-            value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="rounded-none h-11" />
+            value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="rounded-2xl h-11" />
         </div>
-        <Button data-testid="login-submit" disabled={busy} className="w-full h-11 rounded-none bg-accent hover:bg-accent/90 text-white">
+        <Button data-testid="login-submit" disabled={busy} className="w-full h-11 rounded-2xl bg-accent hover:bg-accent/90 text-white">
           {busy ? "Logging in…" : "Log in"}
         </Button>
         <OrDivider />
         <GoogleButton testid="google-login-btn" />
         <p className="text-sm text-muted-foreground">
-          New to ServiceHub? <Link to="/register" data-testid="register-link" className="text-accent font-medium hover:underline">Create an account</Link>
+          New to FixiPro? <Link to="/register" data-testid="register-link" className="text-accent font-medium hover:underline">Create an account</Link>
         </p>
       </form>
     </AuthShell>
@@ -157,7 +157,7 @@ export function Register() {
     try {
       const { data } = await api.post("/auth/register", form);
       setUser(data);
-      toast.success("Account created. Welcome to ServiceHub!");
+      toast.success("Account created. Welcome to FixiPro!");
       navigate(homeFor(data));
     } catch (err) {
       setError(errMsg(err, "Registration failed"));
@@ -167,11 +167,11 @@ export function Register() {
   };
 
   return (
-    <AuthShell title="Create your account" sub="Book trusted local professionals — or become one." testid="register-page">
+    <AuthShell title="Create your account" sub="Book trusted local handymen — or become one." testid="register-page">
       <form onSubmit={submit} className="space-y-5">
         {error && <div data-testid="register-error" className="border border-destructive/50 bg-destructive/10 text-destructive text-sm px-4 py-3">{error}</div>}
         <div className="grid grid-cols-2 gap-2" data-testid="role-picker">
-          {[{ v: "customer", label: "I need work done" }, { v: "provider", label: "I'm a professional" }].map((r) => (
+          {[{ v: "customer", label: "I need work done" }, { v: "provider", label: "I'm a handyman" }].map((r) => (
             <button type="button" key={r.v} data-testid={`role-${r.v}`}
               onClick={() => setForm({ ...form, role: r.v })}
               className={`border px-4 py-3 text-sm font-medium text-left transition-colors duration-200 ${
@@ -183,20 +183,20 @@ export function Register() {
         <div className="space-y-2">
           <Label htmlFor="name" className="label-caps">Full name</Label>
           <Input data-testid="register-name" id="name" required minLength={2}
-            value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="rounded-none h-11" />
+            value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="rounded-2xl h-11" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="remail" className="label-caps">Email</Label>
           <Input data-testid="register-email" id="remail" type="email" required autoComplete="email"
-            value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="rounded-none h-11" />
+            value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="rounded-2xl h-11" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="rpassword" className="label-caps">Password</Label>
           <Input data-testid="register-password" id="rpassword" type="password" required minLength={8} autoComplete="new-password"
-            value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="rounded-none h-11" />
+            value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="rounded-2xl h-11" />
           <p className="text-xs text-muted-foreground">Minimum 8 characters.</p>
         </div>
-        <Button data-testid="register-submit" disabled={busy} className="w-full h-11 rounded-none bg-accent hover:bg-accent/90 text-white">
+        <Button data-testid="register-submit" disabled={busy} className="w-full h-11 rounded-2xl bg-accent hover:bg-accent/90 text-white">
           {busy ? "Creating account…" : "Create account"}
         </Button>
         <OrDivider />
@@ -238,9 +238,9 @@ export function ForgotPassword() {
           <div className="space-y-2">
             <Label htmlFor="femail" className="label-caps">Email</Label>
             <Input data-testid="forgot-email" id="femail" type="email" required
-              value={email} onChange={(e) => setEmail(e.target.value)} className="rounded-none h-11" />
+              value={email} onChange={(e) => setEmail(e.target.value)} className="rounded-2xl h-11" />
           </div>
-          <Button data-testid="forgot-submit" disabled={busy} className="w-full h-11 rounded-none">
+          <Button data-testid="forgot-submit" disabled={busy} className="w-full h-11 rounded-2xl">
             {busy ? "Sending…" : "Send reset link"}
           </Button>
         </form>
@@ -281,9 +281,9 @@ export function ResetPassword() {
         <div className="space-y-2">
           <Label htmlFor="npass" className="label-caps">New password</Label>
           <Input data-testid="reset-password-input" id="npass" type="password" required minLength={8}
-            value={password} onChange={(e) => setPassword(e.target.value)} className="rounded-none h-11" />
+            value={password} onChange={(e) => setPassword(e.target.value)} className="rounded-2xl h-11" />
         </div>
-        <Button data-testid="reset-submit" disabled={busy} className="w-full h-11 rounded-none">
+        <Button data-testid="reset-submit" disabled={busy} className="w-full h-11 rounded-2xl">
           {busy ? "Updating…" : "Update password"}
         </Button>
       </form>

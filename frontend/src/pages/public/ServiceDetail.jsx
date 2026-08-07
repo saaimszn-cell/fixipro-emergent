@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import api, { fmtGBP, fmtDate } from "../../lib/api";
+import api, { fmtDate } from "../../lib/api";
 import { useAuth } from "../../context/AuthContext";
 import { Button } from "../../components/ui/button";
 import { BadgeCheck, ShieldCheck, Star, ArrowLeft, ArrowRight } from "lucide-react";
@@ -21,7 +21,7 @@ export default function ServiceDetail() {
     return (
       <div className="max-w-3xl mx-auto px-6 py-24 text-center" data-testid="service-not-found">
         <h1 className="font-display font-extrabold text-3xl">Service not found</h1>
-        <Button onClick={() => navigate("/services")} className="mt-6 rounded-none">Browse services</Button>
+        <Button onClick={() => navigate("/services")} className="mt-6 rounded-full">Browse services</Button>
       </div>
     );
   }
@@ -50,7 +50,7 @@ export default function ServiceDetail() {
           <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">{svc.description}</p>
           <div className="grid sm:grid-cols-3 gap-4 mt-8">
             {[
-              { icon: BadgeCheck, t: "Vetted pros", d: `${svc.provider_count} verified providers` },
+              { icon: BadgeCheck, t: "Vetted pros", d: `${svc.provider_count} verified handymen` },
               { icon: ShieldCheck, t: "Insured work", d: "Public liability cover required" },
               { icon: Star, t: `${svc.rating}/5 rated`, d: "From verified customer reviews" },
             ].map((f) => (
@@ -85,10 +85,10 @@ export default function ServiceDetail() {
 
         <aside className="lg:col-span-5">
           <div className="border border-border bg-card p-6 sm:p-8 sticky top-24">
-            <p className="label-caps text-muted-foreground">Typical price</p>
-            <p className="font-display font-black text-4xl mt-1">{fmtGBP(svc.base_price)}</p>
-            <p className="text-sm text-muted-foreground">{svc.unit} — final price confirmed by quote</p>
-            <Button data-testid="request-service-btn" onClick={cta} className="w-full mt-6 h-12 rounded-none bg-accent hover:bg-accent/90 text-white">
+            <p className="label-caps text-muted-foreground">Live custom quotes</p>
+            <p className="font-display font-black text-3xl mt-1">Handymen set the price</p>
+            <p className="text-sm text-muted-foreground">Post your job and compare custom quotes as they arrive live — the quote you accept becomes the agreed price.</p>
+            <Button data-testid="request-service-btn" onClick={cta} className="w-full mt-6 h-12 rounded-full bg-accent hover:bg-accent/90 text-white">
               Request this service <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
             <p className="text-xs text-muted-foreground mt-4 leading-relaxed">
@@ -104,7 +104,7 @@ export default function ServiceDetail() {
                   <Link key={r.slug} to={`/services/${r.slug}`} data-testid={`related-${r.slug}`}
                     className="flex items-center justify-between border border-border bg-card px-4 py-3 text-sm font-medium transition-colors duration-200 hover:border-accent">
                     {r.name}
-                    <span className="text-muted-foreground">{fmtGBP(r.base_price)}</span>
+                    <span className="text-muted-foreground">Get quotes</span>
                   </Link>
                 ))}
               </div>

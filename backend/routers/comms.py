@@ -18,7 +18,7 @@ DEMO_CONVERSATIONS = [
          {"from": "customer", "text": "I want to change the date of my booking", "at": "2026-06-09T15:02:00"},
          {"from": "ai", "text": "I can help with that. Could you confirm the booking reference or the service?", "at": "2026-06-09T15:02:15"},
          {"from": "customer", "text": "Actually I'd rather speak to a person", "at": "2026-06-09T15:03:00"},
-         {"from": "agent", "text": "Hi David, this is Priya from ServiceHub support. Happy to help move your booking — what date suits you?", "at": "2026-06-09T15:06:40"},
+         {"from": "agent", "text": "Hi David, this is Priya from FixiPro support. Happy to help move your booking — what date suits you?", "at": "2026-06-09T15:06:40"},
      ]},
     {"channel": "email", "contact_name": "Manchester Lettings Ltd", "contact": "ops@mlettings.co.uk",
      "status": "with_agent", "ai_handled": False, "handover": False,
@@ -47,7 +47,7 @@ async def integrations(user: dict = Depends(get_current_user)):
     return {
         "whatsapp": {"connected": state.get("connected", False), "mode": "stub",
                      "note": "Live WhatsApp Business API connection is stubbed for internal testing. UI and logs are fully functional.",
-                     "phone_number": state.get("phone_number", ""), "business_name": "ServiceHub UK"},
+                     "phone_number": state.get("phone_number", ""), "business_name": "FixiPro UK"},
         "email": {"connected": True, "provider": "Transactional email (internal)"},
         "sms": {"connected": False, "mode": "stub", "note": "SMS sending stubbed for internal testing."},
         "push": {"connected": False, "mode": "stub", "note": "Push notifications stubbed for internal testing."},
@@ -132,7 +132,7 @@ async def simulate_inbound(conv_id: str, body: dict, user: dict = Depends(get_cu
     update = {"$push": {"messages": msg}, "$set": {"updated_at": now()}}
     reply_text = None
     if conv.get("ai_handled") and not conv.get("handover"):
-        reply_text = ("Thanks for your message. I'm the ServiceHub assistant (demo mode) — "
+        reply_text = ("Thanks for your message. I'm the FixiPro assistant (demo mode) — "
                       "a team member will follow up shortly.")
         update["$push"]["messages"] = msg
     await db.comm_conversations.update_one({"_id": conv["_id"]}, update)

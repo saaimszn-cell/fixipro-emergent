@@ -23,7 +23,7 @@ const NAVS = {
     { to: "/dashboard/reviews", label: "Reviews", icon: Star },
     { to: "/dashboard/messages", label: "Messages", icon: MessageSquare },
     { to: "/dashboard/notifications", label: "Notifications", icon: Bell },
-    { to: "/dashboard/favourites", label: "Favourite Providers", icon: Heart },
+    { to: "/dashboard/favourites", label: "Favourite Handymen", icon: Heart },
     { to: "/dashboard/assistant", label: "AI Assistant", icon: Bot },
     { to: "/dashboard/support", label: "Support", icon: LifeBuoy },
     { to: "/dashboard/settings", label: "Settings", icon: Settings },
@@ -47,7 +47,7 @@ const NAVS = {
   admin: [
     { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
     { to: "/admin/users", label: "Users", icon: Users },
-    { to: "/admin/providers", label: "Providers", icon: ShieldCheck },
+    { to: "/admin/providers", label: "Handymen", icon: ShieldCheck },
     { to: "/admin/jobs", label: "Jobs & Requests", icon: Briefcase },
     { to: "/admin/payments", label: "Payments", icon: CreditCard },
     { to: "/admin/reviews", label: "Reviews", icon: Star },
@@ -127,7 +127,7 @@ export default function PortalLayout({ role }) {
               </SheetContent>
             </Sheet>
             <p className="label-caps text-muted-foreground hidden sm:block">
-              {role === "admin" ? "Control Centre" : role === "provider" ? "Provider Portal" : "My Account"}
+              {role === "admin" ? "Control Centre" : role === "provider" ? "Handyman Portal" : "My Account"}
             </p>
           </div>
           <div className="flex items-center gap-2">

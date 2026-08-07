@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api, { errMsg, fmtDate, fmtGBP } from "../../lib/api";
 import { useAuth } from "../../context/AuthContext";
@@ -18,9 +18,29 @@ export default function RequestDetail({ providerView = false }) {
   const [quoteForm, setQuoteForm] = useState({ amount: "", message: "" });
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [aiBusy, setAiBusy] = useState(false);
+  const prevQuotes = useRef(null);
 
-  const load = () => api.get(`/requests/${id}`).then((r) => setReq(r.data)).catch((e) => toast.error(errMsg(e)));
+  const load = () => api.get(`/requests/${id}`).then((r) => {
+    setReq(r.data);
+    if (prevQuotes.current === null) prevQuotes.current = r.data.quotes.length;
+  }).catch((e) => toast.error(errMsg(e)));
   useEffect(() => { load(); }, [id]);
+
+  // Live quote updates: poll while the request is open so customers see new quotes without refreshing
+  useEffect(() => {
+    if (!req || !["open", "quoted"].includes(req.status)) return;
+    const t = setInterval(async () => {
+      try {
+        const { data } = await api.get(`/requests/${id}`);
+        if (prevQuotes.current !== null && data.quotes.length > prevQuotes.current) {
+          toast.success(`${data.quotes.length - prevQuotes.current} new quote${data.quotes.length - prevQuotes.current > 1 ? "s" : ""} just arrived`);
+        }
+        prevQuotes.current = data.quotes.length;
+        setReq(data);
+      } catch {}
+    }, 4000);
+    return () => clearInterval(t);
+  }, [req?.status, id]);
 
   if (!req) return <div className="text-muted-foreground p-8">Loading…</div>;
 
@@ -122,6 +142,9 @@ export default function RequestDetail({ providerView = false }) {
                   <CreditCard className="mr-2 h-4 w-4" /> Pay {fmtGBP(req.job.amount)} securely
                 </Button>
               )}
+              {needsPayment && user.role === "customer" && (
+                <p className="text-xs text-muted-foreground mt-2">You pay the agreed quote price of {fmtGBP(req.job.amount)} — the handyman receives 85% after FixiPro's 15% platform commission.</p>
+              )}
               <Button data-testid="chat-other-btn" variant="outline" onClick={() => startChat(providerView ? req.customer_id : req.job.provider_id)} className="mt-4 ml-0 mr-2 rounded-none">
                 Message {providerView ? "customer" : "provider"}
               </Button>
@@ -139,6 +162,12 @@ export default function RequestDetail({ providerView = false }) {
         <div className="lg:col-span-5">
           <div className="flex items-center justify-between mb-3">
             <p className="label-caps text-muted-foreground">Quotes ({req.quotes.length})</p>
+            <div className="flex items-center gap-3">
+              {["open", "quoted"].includes(req.status) && (
+                <span data-testid="live-quotes-indicator" className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse-dot" /> Live
+                </span>
+              )}
             {providerView && ["open", "quoted"].includes(req.status) && (
               <Dialog open={quoteOpen} onOpenChange={setQuoteOpen}>
                 <DialogTrigger asChild><Button data-testid="send-quote-btn" className="rounded-none bg-accent hover:bg-accent/90 text-white" size="sm">Send quote</Button></DialogTrigger>
@@ -159,15 +188,17 @@ export default function RequestDetail({ providerView = false }) {
                         onChange={(e) => setQuoteForm({ ...quoteForm, message: e.target.value })} className="rounded-none" />
                     </div>
                     <Button data-testid="quote-submit" type="submit" className="rounded-none w-full">Send quote</Button>
+                    <p className="text-xs text-muted-foreground">You receive 85% of the agreed price — FixiPro retains a 15% platform commission on completed jobs.</p>
                   </form>
                 </DialogContent>
               </Dialog>
             )}
+            </div>
           </div>
 
           {req.quotes.length === 0 ? (
             <div className="border border-dashed p-8 text-sm text-muted-foreground" data-testid="no-quotes">
-              {providerView ? "Be the first to quote on this job." : "Quotes from professionals will appear here — usually within a few hours."}
+              {providerView ? "Be the first to quote on this job." : "Custom quotes from handymen will appear here live — usually within a few hours."}
             </div>
           ) : (
             <div className="space-y-3">

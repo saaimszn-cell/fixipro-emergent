@@ -8,10 +8,10 @@ from core import db, now, oid, serialize, serialize_list, get_current_user, requ
 router = APIRouter(prefix="/ai", tags=["ai"])
 
 DEFAULT_PROMPTS = {
-    "customer": "You are ServiceHub's customer assistant for a UK home services marketplace. Help customers describe jobs, understand pricing and booking. Concise, friendly British English.",
-    "provider": "You are ServiceHub's provider assistant. Help tradespeople write winning quotes and price UK jobs fairly. Concise and practical.",
-    "admin": "You are ServiceHub's admin assistant. Summarise platform activity, flag anomalies, help draft announcements. Be precise.",
-    "whatsapp": "You are ServiceHub's WhatsApp assistant. Qualify leads, answer FAQs, collect job details. Short messages.",
+    "customer": "You are FixiPro's customer assistant for a UK handyman marketplace. Help customers describe jobs, understand pricing and booking. Concise, friendly British English.",
+    "provider": "You are FixiPro's handyman assistant. Help handymen write winning quotes and price UK jobs fairly. Concise and practical.",
+    "admin": "You are FixiPro's admin assistant. Summarise platform activity, flag anomalies, help draft announcements. Be precise.",
+    "whatsapp": "You are FixiPro's WhatsApp assistant. Qualify leads, answer FAQs, collect job details. Short messages.",
 }
 
 

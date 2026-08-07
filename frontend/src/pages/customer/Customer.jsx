@@ -114,7 +114,7 @@ export function NewRequest() {
           <Select value={form.service_id} onValueChange={(v) => setForm({ ...form, service_id: v })} required>
             <SelectTrigger data-testid="req-service" className="rounded-none h-11"><SelectValue placeholder="Choose a service…" /></SelectTrigger>
             <SelectContent>
-              {services.map((s) => <SelectItem key={s.id} value={s.id}>{s.name} — from {fmtGBP(s.base_price)}</SelectItem>)}
+              {services.map((s) => <SelectItem key={s.id} value={s.id}>{s.name} — custom quotes</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
@@ -221,7 +221,7 @@ export function QuotesPage() {
   useEffect(() => { api.get("/requests/mine").then((r) => setRequests(r.data.filter((x) => x.quote_count > 0))).catch(() => {}); }, []);
   return (
     <div data-testid="quotes-page">
-      <PageHeader title="Quotes" sub="Requests that have received quotes from professionals." />
+      <PageHeader title="Quotes" sub="Requests that have received custom quotes from handymen." />
       {requests.length === 0 ? <EmptyState title="No quotes yet" hint="When pros quote on your requests, they'll show up here." /> : (
         <div className="space-y-3">
           {requests.map((r) => (
@@ -309,8 +309,8 @@ export function Favourites() {
   };
   return (
     <div data-testid="favourites-page">
-      <PageHeader title="Favourite providers" sub="Your go-to professionals, one tap away." />
-      {items.length === 0 ? <EmptyState title="No favourites yet" hint="Save great professionals after a job to rebook them quickly." /> : (
+      <PageHeader title="Favourite handymen" sub="Your go-to handymen, one tap away." />
+      {items.length === 0 ? <EmptyState title="No favourites yet" hint="Save great handymen after a job to rebook them quickly." /> : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {items.map((p) => (
             <div key={p.id} data-testid={`fav-${p.user_id}`} className="border border-border bg-card p-6">

@@ -22,13 +22,13 @@ export function AdminDashboard() {
   }, []);
 
   if (!stats) return <div className="text-muted-foreground p-8">Loading…</div>;
-  const COLORS = ["#0F172A", "#FF3B30", "#0E7C6B", "#D9A420", "#8B93A7"];
+  const COLORS = ["#0F172A", "#2563EB", "#0E7C6B", "#D9A420", "#8B93A7"];
 
   return (
     <div data-testid="admin-dashboard">
       <PageHeader title="Control Centre" sub="Platform health at a glance." />
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard testid="ad-users" icon={Users} label="Total users" value={stats.users} hint={`${stats.customers} customers · ${stats.providers} providers`} />
+        <StatCard testid="ad-users" icon={Users} label="Total users" value={stats.users} hint={`${stats.customers} customers · ${stats.providers} handymen`} />
         <StatCard testid="ad-pending" icon={ShieldCheck} label="Pending verifications" value={stats.pending_verifications} />
         <StatCard testid="ad-jobs" icon={Briefcase} label="Jobs" value={stats.jobs} hint={`${stats.active_jobs} active · ${stats.completed_jobs} completed`} />
         <StatCard testid="ad-revenue" icon={CreditCard} label="Revenue" value={fmtGBP(stats.revenue)} hint={`${stats.transactions} paid transactions`} />
@@ -99,7 +99,7 @@ export function AdminUsers() {
 
   return (
     <div data-testid="admin-users-page">
-      <PageHeader title="User management" sub="Customers, providers and staff accounts." />
+      <PageHeader title="User management" sub="Customers, handymen and staff accounts." />
       <div className="flex flex-wrap gap-3 mb-5">
         <Input data-testid="user-search" placeholder="Search name or email…" value={q} onChange={(e) => setQ(e.target.value)} className="rounded-none max-w-xs bg-card" />
         <Select value={role} onValueChange={setRole}>
@@ -107,7 +107,7 @@ export function AdminUsers() {
           <SelectContent>
             <SelectItem value="all">All roles</SelectItem>
             <SelectItem value="customer">Customers</SelectItem>
-            <SelectItem value="provider">Providers</SelectItem>
+            <SelectItem value="provider">Handymen</SelectItem>
             <SelectItem value="admin">Admins</SelectItem>
           </SelectContent>
         </Select>
@@ -150,14 +150,14 @@ export function AdminProviders() {
   const verify = async (p, approve) => {
     try {
       await api.post(`/admin/providers/${p.id}/verify`, { approve });
-      toast.success(approve ? "Provider approved" : "Provider rejected");
+      toast.success(approve ? "Handyman approved" : "Handyman rejected");
       load();
     } catch (e) { toast.error(errMsg(e)); }
   };
 
   return (
     <div data-testid="admin-providers-page">
-      <PageHeader title="Provider management" sub="Verification queue and provider accounts.">
+      <PageHeader title="Handyman management" sub="Verification queue and handyman accounts.">
         <Select value={status} onValueChange={setStatus}>
           <SelectTrigger data-testid="prov-status-filter" className="rounded-none w-44 bg-card"><SelectValue /></SelectTrigger>
           <SelectContent>
@@ -168,7 +168,7 @@ export function AdminProviders() {
           </SelectContent>
         </Select>
       </PageHeader>
-      {items.length === 0 ? <EmptyState title="No providers" hint="Provider signups and verification requests appear here." /> : (
+      {items.length === 0 ? <EmptyState title="No handymen" hint="Handyman signups and verification requests appear here." /> : (
         <div className="space-y-3">
           {items.map((p) => (
             <div key={p.id} data-testid={`provider-${p.id}`} className="border border-border bg-card p-5">
@@ -288,7 +288,7 @@ export function AdminReports() {
       <PageHeader title="Reports & analytics" sub="Revenue, fees and marketplace activity." />
       <div className="grid sm:grid-cols-3 gap-4">
         <StatCard testid="rep-gross" icon={CreditCard} label="Gross revenue" value={fmtGBP(revenue?.gross_revenue)} />
-        <StatCard testid="rep-fees" icon={CreditCard} label="Platform fees (10%)" value={fmtGBP(revenue?.platform_fees)} />
+        <StatCard testid="rep-fees" icon={CreditCard} label="Platform commission (15%)" value={fmtGBP(revenue?.platform_fees)} />
         <StatCard testid="rep-txns" icon={Briefcase} label="Paid transactions" value={revenue?.transactions ?? 0} />
       </div>
       <div className="grid lg:grid-cols-2 gap-6 mt-8">

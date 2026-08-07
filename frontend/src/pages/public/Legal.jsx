@@ -39,7 +39,7 @@ export function NotFound() {
       <p className="font-display font-black text-7xl sm:text-8xl text-accent">404</p>
       <h1 className="font-display font-extrabold text-3xl sm:text-4xl tracking-tight mt-4">This page has wandered off.</h1>
       <p className="text-muted-foreground mt-3 max-w-md">The link may be broken, or the page may have moved. Let's get you back on track.</p>
-      <Link to="/"><Button data-testid="nf-home-btn" className="mt-8 rounded-none bg-accent hover:bg-accent/90 text-white">Back to homepage</Button></Link>
+      <Link to="/"><Button data-testid="nf-home-btn" className="mt-8 rounded-full bg-accent hover:bg-accent/90 text-white">Back to homepage</Button></Link>
     </div>
   );
 }
