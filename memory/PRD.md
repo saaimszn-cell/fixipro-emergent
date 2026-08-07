@@ -1,4 +1,5 @@
-# ServiceHub — UK Home Services Marketplace (PRD)
+# FixiPro — UK Handyman Marketplace (PRD)
+# (Rebranded from ServiceHub on 2026-08-07: blue #2563EB accent, white/#EFF6FF backgrounds, handyman terminology, hello.fixipro@gmail.com support email)
 
 ## Original Problem Statement
 Complete marketplace website (development + internal testing only; excludes live deployment/production launch). UK-focused home services + generic multi-category marketplace connecting customers with vetted service providers. Scope pillars: (1) Public website, (2) Authentication, (3) Customer account, (4) Service provider account, (5) Admin & super admin control centre, (6) Shared UI components, (7) Backend APIs, (8) Database, (9) Internal testing, (10) AI & automation platform, (11) Communication & WhatsApp integration (stubbed).
@@ -32,6 +33,15 @@ Complete marketplace website (development + internal testing only; excludes live
 - Provider: dashboard, browse matched open requests, AI quote assist, quotes, jobs w/ status pipeline + timeline, earnings (10% fee), wallet, withdrawals (min £10), availability calendar (block days), verification/documents, business profile (services+coverage), messages/notifications/reviews/support/settings, AI assistant
 - Admin: dashboard + charts, users (search/suspend), providers (verify/reject + doc review), jobs, payments + refunds, review moderation, support replies, categories/blog/CMS generic CRUD, message templates, reports/revenue, audit logs, system settings, AI control centre (4 assistants, model/prompt/toggle), comms & WhatsApp hub (stub connect, channel filters, simulate inbound, AI auto-reply, live agent handover, comm logs)
 - Seed data: 3 accounts, 6 categories, 15 services, FAQs, blog posts, CMS pages, templates, AI configs, demo request + £95 quote, demo comm conversations
+
+## Update 2026-08-07 (iteration 3 — verified 27/27 backend, 13/13 public pages)
+- Rebrand: FixiPro everywhere (logo FP tile + FixiPro.co.uk, navy announcement bar, pill nav + Services mega menu with 8 categories incl. new General Repairs & Appliance Repair, browser title)
+- Design per user's old-site screenshots: light-blue gradient hero + white rounded search card (postcode/category/popular/trending chips), rounded-2xl soft-card cards, blue/white/near-black palette
+- Live quoting: fixed prices removed from public pages; custom handyman quotes; customer request detail polls every 4s with Live indicator + toast on new quotes
+- Commission: 15% platform fee (was 10%) — earnings view shows Agreed price / FixiPro fee (15%) / Your payout (85%)
+- Contact page: clickable mailto:hello.fixipro@gmail.com + tel:+447538624492 cards, Spline 3D background (spline-viewer, official demo scene), framer-motion depth animations
+- Support email setting + DB updated to hello.fixipro@gmail.com
+- Lesson: avoid parallel edits to the same file (race clobbered PublicLayout NAV once — fixed)
 
 ## Testing Status
 - Iteration 1: backend 16/20 (2 test-side endpoint errors, 1 AI-config false alarm, 1 real brute-force bug)
