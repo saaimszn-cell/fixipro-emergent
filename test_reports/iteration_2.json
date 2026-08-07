@@ -1,0 +1,50 @@
+{
+  "summary": "Iteration 2 testing — backend pytest suite updated to fix iter1 endpoint drift (/api/requests/open, /api/admin/collection/ai_configs) and added Google OAuth session tests + brute-force retest. 21/22 backend tests pass. Brute-force lockout STILL BROKEN (500 error, not 429) due to a timezone-comparison bug in check_lockout(). Frontend smoke-tested all major routes across all 3 roles — home + 13 public pages + 6 customer routes + 8 provider routes + 14 admin routes all render, no console errors beyond expected pre-login 401. Google OAuth callback flow verified: /oauth/callback#session_id=bogus redirects to /login without hanging. Role guards verified (logged-out /dashboard→/login, customer→/admin→/dashboard, provider→/dashboard→/pro). Google buttons present with correct data-testids on /login and /register. Manual user_sessions insert test passes — Bearer session_token works on /api/auth/me and /api/requests/mine. Full E2E Stripe checkout + review + messaging flows were NOT executed via Playwright (require external Stripe UI + long sequential flow); the backend endpoints supporting them are covered in the pytest suite and the frontend pages render without error — main agent should verify UI interactivity for those flows.",
+  "backend_issues": {
+    "critical": [
+      {
+        "endpoint": "POST /api/auth/login (brute-force path)",
+        "issue": "After 5 failed login attempts (from same X-Forwarded-For+email), the 6th request returns HTTP 500 instead of 429. TypeError: can't compare offset-naive and offset-aware datetimes at /app/backend/routers/auth.py:36 in check_lockout — rec['locked_until'] retrieved from MongoDB is timezone-naive, while _now() (from core) is timezone-aware. Fix: either store locked_until as naive UTC everywhere, or convert on read (e.g. locked_until.replace(tzinfo=timezone.utc)) before comparing.",
+        "priority": "HIGH"
+      }
+    ],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Fix timezone-aware/naive datetime comparison in /app/backend/routers/auth.py check_lockout() so brute-force lockout returns 429 instead of 500 on the 6th failed attempt. Suggested fix: `lu = rec.get('locked_until'); if lu is not None and (lu if lu.tzinfo else lu.replace(tzinfo=timezone.utc)) > _now(): raise HTTPException(429, ...)`.",
+    "(Optional) Main agent should manually complete the full customer → Stripe test-card payment → provider start/complete → review flow via UI to confirm end-to-end integration, since the Stripe hosted checkout page cannot be automated from this sub-agent."
+  ],
+  "critical_code_review_comments": [
+    "auth.py check_lockout uses MongoDB-stored datetime without tzinfo normalization → 500s on 6th failed login. Same class of bug likely lurks anywhere else datetimes are compared against core.now() after a Mongo round-trip.",
+    "record_failure() always writes locked_until only when count reaches MAX_ATTEMPTS but never resets after successful login; however login already calls delete_many on success — OK.",
+    "Test suite from iter1 hit two non-existent endpoints (/provider/browse, /provider/stats). Real endpoints are /api/requests/open and /api/provider/earnings + /api/provider/wallet aggregated client-side. Backend does not expose a single dashboard-stats endpoint for providers — consider adding /api/provider/stats to avoid client-side aggregation and to give admins a canonical KPI.",
+    "AI configs are exposed via generic /api/admin/collection/ai_configs — no dedicated /api/ai/assistants route. Consider a typed route for clarity and pydantic validation."
+  ],
+  "updated_files": [
+    "/app/backend/tests/backend_test.py"
+  ],
+  "success_rate": {
+    "backend": "95% (21/22 pytest)",
+    "frontend": "Smoke 100% (30+ routes across 3 roles all render, guards work, Google buttons present, callback redirects correctly). Deep interactive E2E (Stripe checkout, quote accept-pay-complete-review, AI SSE stream, WhatsApp simulate-inbound) not exhaustively executed."
+  },
+  "test_credentials": "Verified working: saaimszn@gmail.com/Admin@123, customer@example.com/Customer@123, provider@example.com/Provider@123",
+  "seed_data_creation": "None persistent. Test creates+cleans a temporary google.test user + user_sessions row (deleted in teardown). test_customer_create_request creates a TEST_-prefixed request (not cleaned; safe to leave for admin visibility). Brute-force test registers a throwaway user each run.",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend pytest suite at /app/backend/tests/backend_test.py is stable and reusable. Only remaining known bug: brute-force lockout returns 500 not 429 due to timezone-aware vs naive datetime comparison in check_lockout. After main agent fixes, re-run: pytest /app/backend/tests/backend_test.py::test_brute_force_lockout. Frontend deep flows (Stripe payment, review, messaging, AI chat streaming, WhatsApp simulate-inbound) should be executed interactively by the next agent — page routes render fine and data-testids are in place; the £95 seeded 'Kitchen tap leaking' request/quote should still be pending unless already used.",
+  "rca of the issue": {
+    "bug": "Brute-force lockout returns 500 instead of 429",
+    "reproduction": "Register a new user, then POST /api/auth/login with wrong password 6 times using a stable X-Forwarded-For header. 1st-5th → 401. 6th → 500.",
+    "root_cause": "In /app/backend/routers/auth.py::check_lockout at line 36, `rec['locked_until']` is a datetime read from MongoDB which pymongo returns as timezone-naive UTC, while core.now() is timezone-aware. Python raises TypeError on the > comparison, FastAPI translates to 500.",
+    "mitigation": "Normalize both sides before comparing. Preferred: store all datetimes as naive UTC (or all as aware) consistently. Quick fix: `lu = rec['locked_until']; if lu.tzinfo is None: lu = lu.replace(tzinfo=timezone.utc)` before the comparison, and same treatment on write."
+  }
+}
