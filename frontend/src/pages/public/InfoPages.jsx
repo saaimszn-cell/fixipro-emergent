@@ -175,8 +175,9 @@ export function About() {
             ))}
           </div>
         </div>
-        <img src="https://images.pexels.com/photos/6196684/pexels-photo-6196684.jpeg" alt="The FixiPro team at work"
-          className="lg:col-span-5 w-full h-80 object-cover border border-black/5" />
+        <motion.img src="https://images.unsplash.com/photo-1783587354617-66b8b7c6a0cb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzl8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBoYW5keW1hbiUyMHJlcGFpcmluZyUyMGhvbWUlMjBpbnRlcmlvciUyMHRvb2xzfGVufDB8fHx8MTc4NjExODc4NXww&ixlib=rb-4.1.0&q=85" alt="A professional handyman's tools in a bright home renovation"
+          className="lg:col-span-5 w-full h-80 object-cover border border-black/5 rounded-2xl soft-card"
+          initial={{ opacity: 0, x: 32 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, ease: "easeOut" }} />
       </div>
     </div>
   );

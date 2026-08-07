@@ -58,8 +58,15 @@ export default function Home() {
             <span data-testid="hero-badge" className="inline-flex items-center gap-2 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-700 text-blue-700 dark:text-blue-300 text-xs font-semibold px-4 py-2 rounded-full soft-card">
               <ShieldCheck className="h-3.5 w-3.5" /> UK's trusted handyman marketplace
             </span>
-            <h1 className="font-display font-black text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.05] mt-5">
-              Book trusted handyman services across the UK
+            <h1 className="font-display font-black text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.05] mt-5" style={{ perspective: "900px" }}>
+              {"Book trusted handyman services across the UK".split(" ").map((w, i) => (
+                <motion.span key={i} className="inline-block mr-[0.26em]"
+                  initial={{ opacity: 0, y: 26, rotateX: 45 }}
+                  animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                  transition={{ delay: 0.2 + i * 0.055, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+                  {w}
+                </motion.span>
+              ))}
             </h1>
             <p className="text-base sm:text-lg text-muted-foreground mt-5 max-w-xl leading-relaxed">
               Verified professionals, transparent quotes, and secure bookings — designed for homeowners who expect premium service.

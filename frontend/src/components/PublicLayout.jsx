@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import api from "../lib/api";
 import { Button } from "./ui/button";
@@ -30,6 +31,7 @@ export function ThemeToggle() {
 const NAV = [
   { to: "/how-it-works", label: "How It Works" },
   { to: "/become-provider", label: "Handyman" },
+  { to: "/pricing", label: "Pricing" },
   { to: "/about", label: "About Us" },
   { to: "/contact", label: "Help & Support" },
 ];
@@ -167,7 +169,15 @@ export default function PublicLayout() {
       </header>
 
       <main className="flex-1">
-        <Outlet />
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div key={window.location.pathname}
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}>
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       <footer className="bg-slate-950 text-slate-300 mt-24">

@@ -149,3 +149,41 @@
 
 .chat-scroll::-webkit-scrollbar { width: 5px; }
 .chat-scroll::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 4px; }
+
+html {
+    scroll-behavior: smooth;
+}
+
+.nav-link {
+    position: relative;
+}
+[data-testid="desktop-nav"] a,
+[data-testid="desktop-nav"] button {
+    position: relative;
+}
+[data-testid="desktop-nav"] a::after,
+[data-testid="desktop-nav"] button::after {
+    content: "";
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 5px;
+    height: 2px;
+    border-radius: 2px;
+    background: hsl(var(--accent));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+[data-testid="desktop-nav"] a:hover::after,
+[data-testid="desktop-nav"] button:hover::after {
+    transform: scaleX(1);
+}
+
+@keyframes float-soft {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+.animate-float-soft {
+    animation: float-soft 5s ease-in-out infinite;
+}
