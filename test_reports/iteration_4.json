@@ -1,0 +1,47 @@
+{
+  "summary": "Frontend-only iteration 4 review: visual/animation pass + one-line HIW title fix. All animation primitives verified working (Tilt, CountUp, LiveTicker, ScrollProgress, ReviewMarquee, hero-mesh, bg-accent glow, skeleton loaders, dark mode, reduced-motion). HIW title renders on exactly 1 line at all 4 target widths. Only findings: (a) favicon <link rel=icon> not present in rendered DOM (browser still loads /favicon.svg via default path since it exists — 200) — likely %PUBLIC_URL% substitution issue in CRA build; (b) 24 401 console errors on public homepage from unauthenticated calls to protected endpoints (non-blocking, pre-existing). Regression E2E (login/quote/payment) NOT executed per iteration scope — animation-only pass.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "index.html favicon", "issue": "<link rel=\"icon\" href=\"%PUBLIC_URL%/favicon.svg\"> is present in source but NOT in rendered DOM head (only 3 font <link> tags exist). /favicon.svg endpoint returns 200, so browser fallback works, but the explicit tag is missing. Verify %PUBLIC_URL% is being substituted at build time.", "selector": "link[rel=icon]", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "(Optional) Investigate why <link rel=icon> is missing from rendered DOM even though index.html contains it — check CRA build output / %PUBLIC_URL% substitution. Favicon works via /favicon.svg default fallback so this is low priority.",
+    "(Optional) Silence 24 x 401 console errors on public pages: unauthenticated homepage triggers requests to auth-guarded endpoints (returns 401). Consider guarding these calls or catching to keep console clean."
+  ],
+  "critical_code_review_comments": [
+    "Home.jsx makes GET /categories on mount which is fine, but if user visits homepage while logged-out, other components on public layout appear to call authenticated endpoints producing 401s — worth an audit to avoid cluttered devtools console.",
+    "Favicon <link> tag not appearing in DOM should be validated by inspecting the built public/index.html emitted to CDN."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a (skipped per request)", "frontend": "95%"},
+  "test_credentials": "Used /app/memory/test_credentials.md context — auth flow not exercised this iteration (visual pass).",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Iteration 4 verified all animation features from the review spec. HIW title h1 measured single-line at 1920/1280/768/390 (heights 48/48/40/36 px matching one line-height). Category cards use data-testid='cat-card-<slug>' (8 present); Tilt wrapper applies matrix3d transform on hover as expected. bg-accent buttons show rgba(37,99,235,0.55) box-shadow on hover (glow works). Live ticker text rotates ~every 4s. Scroll-progress width grows from ~366 → ~502 px on mid-scroll. service-skeleton-0 is catchable at DOMContentLoaded on /services. Dark mode toggles html.className='dark'. Regression E2E payment flow (customer→provider→quote→Stripe 4242) was NOT retested since spec was frontend-visual only; backend was untouched per user brief.",
+  "detailed_verification": {
+    "hiw_title_1920": "h1 height=48px, font=48px, lh=48px => 1 line ✓",
+    "hiw_title_1280": "h1 height=48px, font=48px, lh=48px => 1 line ✓",
+    "hiw_title_768":  "h1 height=40px, font=36px, lh=40px => 1 line ✓",
+    "hiw_title_390":  "h1 height=36px, font=26px, lh=36px => 1 line ✓",
+    "hiw_h_scroll_all_widths": "none ✓",
+    "hero_mesh_present": true,
+    "scroll_progress_grows_on_scroll": true,
+    "live_ticker_rotates_4s": true,
+    "review_marquee_present": true,
+    "tilt_on_cat_cards": "matrix3d applied on hover ✓ (8 cards)",
+    "bg_accent_glow_on_hover": "boxShadow rgba(37,99,235,0.55) 0px 12px 30px -8px ✓",
+    "service_skeleton_visible": true,
+    "dark_mode_toggle": "html gains .dark class ✓",
+    "reduced_motion_loads": true,
+    "mobile_390_no_hscroll": {"/": false, "/services": false, "/contact": false, "/pricing": false},
+    "favicon_svg_endpoint": "200",
+    "favicon_link_tag_in_dom": "MISSING (minor)",
+    "hero_stats_values": "1,240+ jobs done | 4.8/5 average | 20 UK cities"
+  }
+}

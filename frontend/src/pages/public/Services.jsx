@@ -9,6 +9,7 @@ export default function ServicesPage() {
   const [categories, setCategories] = useState([]);
   const [services, setServices] = useState([]);
   const [q, setQ] = useState(params.get("q") || "");
+  const [loading, setLoading] = useState(true);
   const category = params.get("category") || "";
 
   useEffect(() => {
@@ -17,7 +18,8 @@ export default function ServicesPage() {
 
   useEffect(() => {
     const t = setTimeout(() => {
-      api.get("/services", { params: { category, q } }).then((r) => setServices(r.data)).catch(() => {});
+      setLoading(true);
+      api.get("/services", { params: { category, q } }).then((r) => setServices(r.data)).catch(() => {}).finally(() => setLoading(false));
     }, 200);
     return () => clearTimeout(t);
   }, [category, q]);
@@ -49,6 +51,12 @@ export default function ServicesPage() {
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10" data-testid="services-grid">
+        {loading && Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} data-testid={`service-skeleton-${i}`} className="border border-border rounded-2xl overflow-hidden bg-card">
+            <div className="h-40 shimmer" />
+            <div className="p-5 space-y-3"><div className="h-3 w-24 shimmer rounded" /><div className="h-5 w-40 shimmer rounded" /><div className="h-4 w-32 shimmer rounded" /></div>
+          </div>
+        ))}
         {services.map((s) => (
           <Link key={s.slug} to={`/services/${s.slug}`} data-testid={`service-card-${s.slug}`}
             className="group border border-border bg-card rounded-2xl overflow-hidden transition-[transform,box-shadow] duration-200 hover:-translate-y-1 hover:shadow-lg">
@@ -69,7 +77,7 @@ export default function ServicesPage() {
           </Link>
         ))}
       </div>
-      {services.length === 0 && (
+      {!loading && services.length === 0 && (
         <div data-testid="no-services" className="border border-dashed p-14 text-center text-muted-foreground mt-10">
           No services match your search.
         </div>

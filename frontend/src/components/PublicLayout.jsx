@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
+import { ScrollProgress, CursorGlow } from "./motion";
 import { useAuth } from "../context/AuthContext";
 import api from "../lib/api";
 import { Button } from "./ui/button";
@@ -64,6 +65,8 @@ export default function PublicLayout() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <ScrollProgress />
+      <CursorGlow />
       <div className="bg-slate-900 text-slate-300 text-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-9 hidden sm:flex items-center justify-between">
           <span>Available 24/7 · UK handyman marketplace</span>

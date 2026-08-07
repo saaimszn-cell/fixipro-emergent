@@ -187,3 +187,107 @@ html {
 .animate-float-soft {
     animation: float-soft 5s ease-in-out infinite;
 }
+
+/* ---- visual/animation pass ---- */
+
+.hero-mesh {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+.hero-mesh span {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(70px);
+    opacity: 0.5;
+}
+.hero-mesh span:nth-child(1) {
+    width: 45vw; height: 45vw; background: #BFDBFE; top: -15%; left: -10%;
+    animation: mesh-a 14s ease-in-out infinite;
+}
+.hero-mesh span:nth-child(2) {
+    width: 35vw; height: 35vw; background: #DBEAFE; bottom: -20%; right: -5%;
+    animation: mesh-b 18s ease-in-out infinite;
+}
+.hero-mesh span:nth-child(3) {
+    width: 22vw; height: 22vw; background: #93C5FD; top: 30%; left: 45%; opacity: 0.35;
+    animation: mesh-a 11s ease-in-out infinite reverse;
+}
+.dark .hero-mesh span {
+    opacity: 0.16;
+}
+@keyframes mesh-a {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(4vw, 3vh) scale(1.08); }
+}
+@keyframes mesh-b {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-3vw, -4vh) scale(1.12); }
+}
+
+[class*="bg-accent"] {
+    transition: box-shadow 0.25s ease, transform 0.15s ease, background-color 0.2s ease, color 0.2s ease;
+}
+[class*="bg-accent"]:hover {
+    box-shadow: 0 12px 30px -8px rgba(37, 99, 235, 0.55);
+}
+button[class*="bg-accent"]:active,
+a[class*="bg-accent"]:active {
+    transform: scale(0.97);
+}
+
+.marquee-track {
+    animation: marquee 36s linear infinite;
+}
+.marquee:hover .marquee-track {
+    animation-play-state: paused;
+}
+@keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+.shimmer {
+    position: relative;
+    overflow: hidden;
+    background: hsl(var(--muted));
+}
+.shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+    animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer {
+    to { transform: translateX(100%); }
+}
+
+.cursor-glow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 340px;
+    height: 340px;
+    border-radius: 9999px;
+    pointer-events: none;
+    z-index: 1;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.10), transparent 60%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    html {
+        scroll-behavior: auto;
+    }
+    .hero-mesh span,
+    .marquee-track {
+        animation: none;
+    }
+}

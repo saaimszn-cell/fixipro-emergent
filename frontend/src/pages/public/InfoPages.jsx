@@ -6,11 +6,11 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "..
 import { motion } from "framer-motion";
 import { ArrowRight, BadgeCheck, CheckCircle2, CreditCard, FileText, MapPin, Search, ShieldCheck, Star, UserCheck, Wallet, CalendarClock, TrendingUp } from "lucide-react";
 
-function Hero({ kicker, title, sub, testid }) {
+function Hero({ kicker, title, sub, testid, titleClass = "" }) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-8" data-testid={testid}>
       <p className="label-caps text-accent">{kicker}</p>
-      <h1 className="font-display font-extrabold text-3xl sm:text-5xl tracking-tight mt-2 max-w-3xl">{title}</h1>
+      <h1 className={`font-display font-extrabold text-3xl sm:text-5xl tracking-tight mt-2 max-w-3xl ${titleClass}`}>{title}</h1>
       {sub && <p className="text-base sm:text-lg text-muted-foreground mt-4 max-w-2xl leading-relaxed">{sub}</p>}
     </div>
   );
@@ -20,7 +20,7 @@ export function HowItWorks() {
   const navigate = useNavigate();
   return (
     <div data-testid="how-it-works-page">
-      <Hero kicker="The process" title="How FixiPro works" sub="From leaky tap to five-star review in three steps — for customers and handymen alike." testid="hiw-hero" />
+      <Hero kicker="The process" title="How FixiPro works" titleClass="whitespace-nowrap !text-[26px] sm:!text-4xl lg:!text-5xl !max-w-none" sub="From leaky tap to five-star review in three steps — for customers and handymen alike." testid="hiw-hero" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-20 grid lg:grid-cols-2 gap-12">
         <div>
           <h2 className="font-display font-bold text-2xl mb-6">For customers</h2>

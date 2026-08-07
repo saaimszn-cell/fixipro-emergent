@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import api from "../../lib/api";
+import { CountUp, LiveTicker, Tilt, ReviewMarquee } from "../../components/motion";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
@@ -34,11 +35,15 @@ export default function Home() {
   const [svc, setSvc] = useState("");
   const [postcode, setPostcode] = useState("");
   const [q, setQ] = useState("");
+  const [reviews, setReviews] = useState([]);
   const navigate = useNavigate();
+  const { scrollY } = useScroll();
+  const cardY = useTransform(scrollY, [0, 500], [0, -36]);
 
   useEffect(() => {
     api.get("/categories").then((r) => setCategories(r.data)).catch(() => {});
     api.get("/stats/public").then((r) => setStats(r.data)).catch(() => {});
+    api.get("/reviews/public").then((r) => setReviews(r.data)).catch(() => {});
   }, []);
 
   const search = (e) => {
@@ -53,7 +58,8 @@ export default function Home() {
   return (
     <div data-testid="home-page">
       <section className="relative overflow-hidden hero-gradient">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-14 sm:pt-20 pb-16 grid lg:grid-cols-12 gap-10 items-center">
+        <div className="hero-mesh" aria-hidden="true"><span /><span /><span /></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-14 sm:pt-20 pb-16 grid lg:grid-cols-12 gap-10 items-center">
           <motion.div initial="hidden" animate="show" variants={fadeUp} className="lg:col-span-6">
             <span data-testid="hero-badge" className="inline-flex items-center gap-2 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-700 text-blue-700 dark:text-blue-300 text-xs font-semibold px-4 py-2 rounded-full soft-card">
               <ShieldCheck className="h-3.5 w-3.5" /> UK's trusted handyman marketplace
@@ -78,13 +84,14 @@ export default function Home() {
                 </p>
               ))}
             </div>
-            <div className="flex items-center gap-6 mt-8 text-sm text-muted-foreground">
-              <span><strong className="text-foreground font-display font-bold">{(stats?.jobs_completed ?? 1240).toLocaleString()}+</strong> jobs done</span>
-              <span><strong className="text-foreground font-display font-bold">{stats?.avg_rating ?? 4.8}/5</strong> average</span>
-              <span className="hidden sm:inline"><strong className="text-foreground font-display font-bold">20</strong> UK cities</span>
+            <div className="flex items-center gap-6 mt-8 text-sm text-muted-foreground" data-testid="hero-stats">
+              <span><strong className="text-foreground font-display font-bold"><CountUp to={stats?.jobs_completed ?? 1240} />+</strong> jobs done</span>
+              <span><strong className="text-foreground font-display font-bold"><CountUp to={stats?.avg_rating ?? 4.8} decimals={1} />/5</strong> average</span>
+              <span className="hidden sm:inline"><strong className="text-foreground font-display font-bold"><CountUp to={20} /></strong> UK cities</span>
             </div>
+            <LiveTicker />
           </motion.div>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }} className="lg:col-span-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }} className="lg:col-span-6" style={{ y: cardY }}>
             <div className="bg-white dark:bg-slate-900 border border-border rounded-2xl soft-card p-6 sm:p-8" data-testid="hero-search-card">
               <div className="flex items-center gap-3">
                 <span className="h-10 w-10 rounded-xl bg-accent text-white flex items-center justify-center shrink-0"><Search className="h-5 w-5" /></span>
@@ -160,6 +167,7 @@ export default function Home() {
             return (
               <motion.div key={c.slug} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }} transition={{ delay: i * 0.06, duration: 0.5 }}>
+                <Tilt>
                 <Link to={`/services?category=${c.slug}`} data-testid={`cat-card-${c.slug}`}
                   className="group relative block h-56 overflow-hidden border border-black/5 rounded-2xl">
                   <img src={c.image} alt={c.name} className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
@@ -172,6 +180,7 @@ export default function Home() {
                     <p className="text-sm text-white/75 mt-1">{c.service_count} services available</p>
                   </div>
                 </Link>
+                </Tilt>
               </motion.div>
             );
           })}
@@ -225,7 +234,18 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 pb-16 sm:pb-24">
+      <section className="py-16 sm:py-24 border-y border-border bg-card/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-10 flex items-end justify-between">
+          <div>
+            <p className="label-caps text-accent">Live reviews</p>
+            <h2 className="font-display font-extrabold text-3xl sm:text-4xl tracking-tight mt-2">Rated by real customers</h2>
+          </div>
+          <Link to="/reviews" data-testid="all-reviews-link" className="text-sm font-medium text-accent hidden sm:block">All reviews</Link>
+        </div>
+        <ReviewMarquee reviews={reviews} />
+      </section>
+
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
         <div className="border border-border bg-card p-8 sm:p-12 grid lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-8">
             <h2 className="font-display font-extrabold text-2xl sm:text-3xl tracking-tight">Are you a handyman?</h2>
