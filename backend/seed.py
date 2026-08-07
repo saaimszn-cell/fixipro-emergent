@@ -184,7 +184,7 @@ async def seed_content():
         await db.settings.insert_many([
             {"key": "platform_fee_pct", "value": 15},
             {"key": "site_name", "value": "FixiPro"},
-            {"key": "support_email", "value": "support@fixipro.co.uk"},
+            {"key": "support_email", "value": "hello.fixipro@gmail.com"},
             {"key": "maintenance_mode", "value": False},
             {"key": "coverage_cities", "value": COVERAGE},
         ])

@@ -1,4 +1,4 @@
-"""ServiceHub backend API integration tests."""
+"""FixiPro backend API integration tests."""
 import os
 import time
 import uuid
@@ -39,6 +39,52 @@ def test_categories():
     r = requests.get(f"{API}/categories", timeout=15)
     assert r.status_code == 200
     assert len(r.json()) >= 1
+
+
+# ---------------- FixiPro rebrand + 15% commission sanity ----------------
+def test_root_api_is_fixipro():
+    r = requests.get(f"{API}/", timeout=10)
+    assert r.status_code == 200
+    assert r.json().get("message") == "FixiPro API"
+
+
+def test_categories_count_and_new_ones():
+    r = requests.get(f"{API}/categories", timeout=15)
+    assert r.status_code == 200
+    cats = r.json()
+    slugs = {c.get("slug") for c in cats}
+    assert len(cats) == 8, f"expected 8 categories, got {len(cats)}: {slugs}"
+    assert "general-repairs" in slugs
+    assert "appliance-repair" in slugs
+
+
+def test_services_count_19():
+    r = requests.get(f"{API}/services", timeout=15)
+    assert r.status_code == 200
+    services = r.json()
+    assert len(services) == 19, f"expected 19 services, got {len(services)}"
+
+
+def test_settings_support_email_and_fee():
+    """Admin can read settings collection — verify hello.fixipro@gmail.com and 15% fee."""
+    s = session_login(*ADMIN)
+    r = s.get(f"{API}/admin/collection/settings", timeout=15)
+    assert r.status_code == 200, r.text
+    items = r.json()
+    kv = {i.get("key"): i.get("value") for i in items if isinstance(i, dict)}
+    assert kv.get("support_email") == "hello.fixipro@gmail.com", f"support_email={kv.get('support_email')}"
+    assert kv.get("site_name") == "FixiPro"
+    # platform fee may be stored either in settings collection or hardcoded — verify constant via math
+    # (checked in test_15pct_fee_math)
+
+
+def test_15pct_fee_math_constant():
+    """Verify PLATFORM_FEE_PCT constant in core.py is 15.0 (parse without importing)."""
+    with open("/app/backend/core.py") as f:
+        src = f.read()
+    assert "PLATFORM_FEE_PCT = 15.0" in src, "PLATFORM_FEE_PCT must be 15.0"
+
+
 
 
 # ---------------- Auth ----------------
