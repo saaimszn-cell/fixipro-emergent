@@ -1,5 +1,5 @@
 import secrets
-from datetime import timedelta
+from datetime import timedelta, timezone
 from fastapi import APIRouter, HTTPException, Request, Response, Depends
 from pydantic import BaseModel, EmailStr, Field
 from core import (db, now, hash_password, verify_password, create_access_token,
@@ -33,7 +33,10 @@ async def check_lockout(identifier: str):
     rec = await db.login_attempts.find_one({"identifier": identifier})
     if rec and rec.get("count", 0) >= MAX_ATTEMPTS:
         from core import now as _now
-        if rec.get("locked_until") and rec["locked_until"] > _now():
+        locked_until = rec.get("locked_until")
+        if locked_until is not None and locked_until.tzinfo is None:
+            locked_until = locked_until.replace(tzinfo=timezone.utc)
+        if locked_until and locked_until > _now():
             raise HTTPException(status_code=429, detail="Too many failed attempts. Try again later.")
         await db.login_attempts.delete_one({"identifier": identifier})
 
@@ -203,7 +206,10 @@ async def reset_password(body: dict):
     if len(password) < 8:
         raise HTTPException(status_code=400, detail="Password must be at least 8 characters")
     rec = await db.password_reset_tokens.find_one({"token": token, "used": False})
-    if not rec or rec["expires_at"] < now():
+    expires_at = rec["expires_at"] if rec else None
+    if expires_at is not None and expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if not rec or expires_at < now():
         raise HTTPException(status_code=400, detail="Invalid or expired token")
     from bson import ObjectId
     await db.users.update_one({"_id": ObjectId(rec["user_id"])},
