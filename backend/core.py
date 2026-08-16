@@ -1,6 +1,11 @@
 import os
 import bcrypt
+import hmac
+import secrets
+import hashlib
+import re
 import jwt
+import bleach
 from datetime import datetime, timezone, timedelta
 from typing import Annotated, Optional, List
 from bson import ObjectId
@@ -156,3 +161,53 @@ async def notify(user_id: str, title: str, body: str, type_: str = "info", link:
         "user_id": user_id, "title": title, "body": body, "type": type_,
         "link": link, "read": False, "created_at": now(),
     })
+
+
+# ---- sanitisation + rate limiting helpers ----
+def sanitize_text(value: str, max_len: int = 5000) -> str:
+    """Strip HTML, collapse whitespace and truncate. Safe for storage & display."""
+    if not isinstance(value, str):
+        return ""
+    cleaned = bleach.clean(value, tags=[], attributes={}, strip=True)
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+    return cleaned[:max_len]
+
+
+def is_valid_email(value: str) -> bool:
+    return bool(re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", value or ""))
+
+
+def client_ip(request: Request) -> str:
+    fwd = request.headers.get("x-forwarded-for", "")
+    if fwd:
+        return fwd.split(",")[0].strip()
+    return request.client.host if request.client else "unknown"
+
+
+async def rate_limit(key: str, ip: str, max_hits: int, window_seconds: int):
+    """Sliding window rate limit persisted in Mongo. Raises 429 when exceeded."""
+    cutoff = now() - timedelta(seconds=window_seconds)
+    identifier = f"{key}:{ip}"
+    await db.rate_limit_hits.delete_many({"identifier": identifier, "at": {"$lt": cutoff}})
+    count = await db.rate_limit_hits.count_documents({"identifier": identifier})
+    if count >= max_hits:
+        raise HTTPException(status_code=429, detail="Too many requests. Please try again later.")
+    await db.rate_limit_hits.insert_one({"identifier": identifier, "at": now()})
+
+
+# ---- completion code helpers (single-use, hashed, rate-limited) ----
+def generate_completion_code() -> str:
+    """Cryptographically random 6-digit code."""
+    return f"{secrets.randbelow(10**6):06d}"
+
+
+def hash_completion_code(code: str) -> str:
+    salt = os.environ.get("JWT_SECRET", "fixipro-salt")
+    return hashlib.sha256(f"{salt}:{code}".encode("utf-8")).hexdigest()
+
+
+def verify_completion_code(candidate: str, stored_hash: str) -> bool:
+    if not candidate or not stored_hash:
+        return False
+    candidate_hash = hash_completion_code(candidate.strip())
+    return hmac.compare_digest(candidate_hash, stored_hash)

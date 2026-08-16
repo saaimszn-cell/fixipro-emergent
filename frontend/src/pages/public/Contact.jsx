@@ -6,13 +6,15 @@ import { Label } from "../../components/ui/label";
 import { Textarea } from "../../components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
 import { toast } from "sonner";
+import api, { errMsg } from "../../lib/api";
 import { Mail, Phone, LifeBuoy, Wrench, Briefcase } from "lucide-react";
 
 const SPLINE_SCENE = "https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode";
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: "", email: "", subject: "Customer support", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", subject: "Customer support", message: "", company: "" });
   const [sent, setSent] = useState(false);
+  const [busy, setBusy] = useState(false);
   const [splineReady, setSplineReady] = useState(false);
 
   useEffect(() => {
@@ -27,10 +29,18 @@ export default function Contact() {
     document.head.appendChild(s);
   }, []);
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-    setSent(true);
-    toast.success("Message received. We'll reply within one working day.");
+    setBusy(true);
+    try {
+      const { data } = await api.post("/comms/contact", form);
+      setSent(true);
+      toast.success(data?.message || "Message received. We'll reply within one working day.");
+    } catch (err) {
+      toast.error(errMsg(err, "Could not send message. Please try again."));
+    } finally {
+      setBusy(false);
+    }
   };
 
   const CARDS = [
@@ -101,10 +111,15 @@ export default function Contact() {
             ) : (
               <form onSubmit={submit} className="bg-white dark:bg-slate-900 border border-border rounded-2xl soft-card p-6 sm:p-8 space-y-5">
                 <h2 className="font-display font-bold text-xl">Send a message</h2>
+                {/* Honeypot — hidden from users, visible to bots. Real users never fill this. */}
+                <input type="text" name="company" tabIndex="-1" autoComplete="off"
+                  value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })}
+                  aria-hidden="true"
+                  style={{ position: "absolute", left: "-9999px", height: 0, width: 0, opacity: 0 }} />
                 <div className="grid sm:grid-cols-2 gap-5">
                   <div className="space-y-2">
                     <Label htmlFor="cname" className="label-caps">Full name</Label>
-                    <Input data-testid="contact-name" id="cname" required value={form.name}
+                    <Input data-testid="contact-name" id="cname" required minLength={2} value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })} className="rounded-xl h-11" />
                   </div>
                   <div className="space-y-2">
@@ -129,7 +144,13 @@ export default function Contact() {
                   <Textarea data-testid="contact-message" id="cmsg" required minLength={10} rows={5} value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })} className="rounded-xl" />
                 </div>
-                <Button data-testid="contact-submit" type="submit" className="rounded-full h-11 bg-accent hover:bg-accent/90 text-white px-8">Send message</Button>
+                <Button data-testid="contact-submit" type="submit" disabled={busy}
+                  className="rounded-full h-11 bg-accent hover:bg-accent/90 text-white px-8">
+                  {busy ? "Sending…" : "Send message"}
+                </Button>
+                <p className="text-xs text-muted-foreground">
+                  Protected by rate-limiting and honeypot spam filtering. We never share your email.
+                </p>
               </form>
             )}
           </motion.div>

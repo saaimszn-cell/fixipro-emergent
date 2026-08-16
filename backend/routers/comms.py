@@ -1,7 +1,109 @@
-from fastapi import APIRouter, HTTPException, Depends
-from core import db, now, oid, serialize, serialize_list, get_current_user, require_roles, notify
+from fastapi import APIRouter, HTTPException, Depends, Request
+from pydantic import BaseModel, EmailStr, Field
+from typing import Optional
+from core import (db, now, oid, serialize, serialize_list, get_current_user, require_roles,
+                  notify, sanitize_text, is_valid_email, rate_limit, client_ip)
 
 router = APIRouter(prefix="/comms", tags=["communications"])
+
+
+class ContactIn(BaseModel):
+    name: str = Field(min_length=2, max_length=100)
+    email: EmailStr
+    subject: str = Field(min_length=3, max_length=120)
+    message: str = Field(min_length=10, max_length=4000)
+    # Honeypot — real users leave this empty; bots fill it in
+    company: Optional[str] = Field(default="", max_length=200)
+
+
+async def _send_email_outbox(to: str, subject: str, body: str, meta: dict = None):
+    """Persist outbound email to Mongo (real SMTP integration point).
+
+    TO GO LIVE with real email: set SMTP_HOST / SMTP_USER / SMTP_PASS / SMTP_FROM
+    in backend/.env and swap this stub for aiosmtplib or a transactional API
+    (SendGrid, Postmark, Mailgun, AWS SES). The message is already validated,
+    sanitised & rate-limited before it reaches here."""
+    doc = {"to": to, "subject": subject, "body": body, "meta": meta or {},
+           "status": "queued", "created_at": now()}
+    # If SMTP credentials are configured, try to send in the background
+    smtp_host = __import__("os").environ.get("SMTP_HOST", "").strip()
+    if smtp_host:
+        try:
+            import smtplib
+            import ssl
+            from email.mime.text import MIMEText
+            import os as _os
+            smtp_user = _os.environ.get("SMTP_USER", "")
+            smtp_pass = _os.environ.get("SMTP_PASS", "")
+            smtp_from = _os.environ.get("SMTP_FROM", smtp_user or "no-reply@fixipro.local")
+            smtp_port = int(_os.environ.get("SMTP_PORT", "587"))
+            msg = MIMEText(body, "plain", "utf-8")
+            msg["Subject"] = subject
+            msg["From"] = smtp_from
+            msg["To"] = to
+            ctx = ssl.create_default_context()
+            with smtplib.SMTP(smtp_host, smtp_port, timeout=15) as server:
+                server.starttls(context=ctx)
+                if smtp_user:
+                    server.login(smtp_user, smtp_pass)
+                server.sendmail(smtp_from, [to], msg.as_string())
+            doc["status"] = "sent"
+            doc["sent_at"] = now()
+        except Exception as e:
+            doc["status"] = "failed"
+            doc["error"] = str(e)[:400]
+    await db.email_outbox.insert_one(doc)
+
+
+@router.post("/contact")
+async def contact_submit(body: ContactIn, request: Request):
+    """Public contact form. Rate-limited (5/min per IP), sanitised, honeypot-protected."""
+    ip = client_ip(request)
+    # Honeypot check — silently accept but do nothing
+    if (body.company or "").strip():
+        return {"ok": True, "message": "Thanks — we'll be in touch."}
+
+    await rate_limit("contact_form", ip, max_hits=5, window_seconds=60)
+
+    name = sanitize_text(body.name, 100)
+    subject = sanitize_text(body.subject, 120)
+    message = sanitize_text(body.message, 4000)
+    email = body.email.strip().lower()
+    if not is_valid_email(email):
+        raise HTTPException(status_code=400, detail="Please provide a valid email address.")
+    if len(name) < 2 or len(message) < 10:
+        raise HTTPException(status_code=400, detail="Please fill in all fields.")
+
+    setting = await db.settings.find_one({"key": "support_email"})
+    support_email = (setting or {}).get("value") or "hello.fixipro@gmail.com"
+
+    doc = {
+        "name": name, "email": email, "subject": subject, "message": message,
+        "ip": ip, "user_agent": request.headers.get("user-agent", "")[:400],
+        "status": "new", "created_at": now(),
+    }
+    res = await db.contact_messages.insert_one(doc)
+
+    email_body = (
+        f"New enquiry via fixipro contact form\n\n"
+        f"From: {name} <{email}>\n"
+        f"Subject: {subject}\n"
+        f"IP: {ip}\n"
+        f"Time: {now().isoformat()}\n\n"
+        f"Message:\n{message}\n"
+    )
+    await _send_email_outbox(support_email, f"[FixiPro Contact] {subject}", email_body,
+                             meta={"contact_id": str(res.inserted_id)})
+
+    return {"ok": True, "id": str(res.inserted_id),
+            "message": "Thanks — we've received your message and will reply within one working day."}
+
+
+@router.get("/contact/messages")
+async def list_contact_messages(user: dict = Depends(require_roles("admin", "super_admin"))):
+    items = await db.contact_messages.find().sort("created_at", -1).to_list(500)
+    return serialize_list(items)
+
 
 DEMO_CONVERSATIONS = [
     {"channel": "whatsapp", "contact_name": "Sophie Reynolds", "contact": "+44 7700 111222",

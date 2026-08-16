@@ -96,8 +96,8 @@ export function BrowseJobs() {
   useEffect(() => { api.get("/requests/open").then((r) => setItems(r.data)).catch(() => {}); }, []);
   return (
     <div data-testid="browse-jobs-page">
-      <PageHeader title="Job requests" sub="Open requests matching your services and coverage." />
-      {items.length === 0 ? <EmptyState title="No open requests" hint="Add more services to your profile to see more jobs." /> : (
+      <PageHeader title="Job requests" sub="First come, first served — claim any open request in your coverage area." />
+      {items.length === 0 ? <EmptyState title="No open requests" hint="Add more services & coverage areas to see more jobs." /> : (
         <div className="grid sm:grid-cols-2 gap-4">
           {items.map((r) => (
             <Link key={r.id} to={`/pro/browse/${r.id}`} data-testid={`browse-${r.id}`}
@@ -108,8 +108,8 @@ export function BrowseJobs() {
               </div>
               <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{r.description}</p>
               <div className="flex justify-between items-center mt-4 text-xs text-muted-foreground">
-                <span>{r.service_name} · {r.postcode}</span>
-                {r.already_quoted && <span className="text-accent font-medium">Quoted</span>}
+                <span>{r.service_name} · {r.city || r.postcode}</span>
+                {r.budget > 0 && <span className="font-bold text-accent text-sm">{fmtGBP(r.budget)}</span>}
               </div>
             </Link>
           ))}
@@ -410,11 +410,15 @@ export function ProviderProfile() {
   const [profile, setProfile] = useState(null);
   const [services, setServices] = useState([]);
   const [cities, setCities] = useState([]);
-  const load = () => api.get("/provider/profile").then((r) => setProfile(r.data)).catch(() => {});
+  const [phone, setPhone] = useState("");
+  const load = () => api.get("/provider/profile").then((r) => {
+    setProfile(r.data);
+  }).catch(() => {});
   useEffect(() => {
     load();
     api.get("/services").then((r) => setServices(r.data)).catch(() => {});
     api.get("/coverage").then((r) => setCities(r.data.cities || [])).catch(() => {});
+    api.get("/auth/me").then((r) => setPhone(r.data.phone || "")).catch(() => {});
   }, []);
   if (!profile) return <div className="text-muted-foreground p-8">Loading…</div>;
 
@@ -423,8 +427,10 @@ export function ProviderProfile() {
     try {
       await api.put("/provider/profile", {
         business_name: profile.business_name, bio: profile.bio,
+        availability: profile.availability,
         services: profile.services, coverage: profile.coverage,
       });
+      await api.put("/auth/profile", { phone });
       toast.success("Profile saved");
       load();
     } catch (err) { toast.error(errMsg(err)); }
@@ -437,15 +443,29 @@ export function ProviderProfile() {
 
   return (
     <div data-testid="provider-profile-page" className="max-w-3xl">
-      <PageHeader title="Business profile" sub="This is what customers see when you quote." />
+      <PageHeader title="Business profile" sub="This is what customers see when you claim their job." />
       <form onSubmit={save} className="border border-border bg-card p-6 sm:p-8 space-y-6">
         <div className="space-y-2">
           <Label className="label-caps">Business name</Label>
           <Input data-testid="bp-name" value={profile.business_name || ""} onChange={(e) => setProfile({ ...profile, business_name: e.target.value })} className="rounded-none h-11" />
         </div>
         <div className="space-y-2">
-          <Label className="label-caps">Bio</Label>
+          <Label className="label-caps">Phone number (visible to customer after payment)</Label>
+          <Input data-testid="bp-phone" type="tel" value={phone}
+            onChange={(e) => setPhone(e.target.value)} className="rounded-none h-11"
+            placeholder="e.g. 07538 624492" />
+        </div>
+        <div className="space-y-2">
+          <Label className="label-caps">Description of your services</Label>
           <Textarea data-testid="bp-bio" rows={4} value={profile.bio || ""} onChange={(e) => setProfile({ ...profile, bio: e.target.value })} className="rounded-none" />
+        </div>
+        <div className="space-y-2">
+          <Label className="label-caps">Availability</Label>
+          <Input data-testid="bp-availability"
+            placeholder="e.g. Monday to Saturday, 8am–6pm"
+            value={profile.availability || ""}
+            onChange={(e) => setProfile({ ...profile, availability: e.target.value })}
+            className="rounded-none h-11" />
         </div>
         <div className="space-y-3">
           <Label className="label-caps">Services you offer ({(profile.services || []).length})</Label>

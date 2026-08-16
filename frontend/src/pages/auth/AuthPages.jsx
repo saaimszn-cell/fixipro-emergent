@@ -146,28 +146,56 @@ export function Login() {
 export function Register() {
   const { setUser, homeFor } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: "", email: "", password: "", role: "customer" });
+  const [form, setForm] = useState({
+    name: "", email: "", password: "", phone: "", role: "customer",
+    bio: "", coverage: [],
+  });
+  const [cities, setCities] = useState([]);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    api.get("/coverage").then((r) => setCities(r.data.cities || [])).catch(() => {});
+  }, []);
+
+  const toggleCoverage = (c) => {
+    setForm((f) => ({
+      ...f,
+      coverage: f.coverage.includes(c) ? f.coverage.filter((x) => x !== c) : [...f.coverage, c],
+    }));
+  };
 
   const submit = async (e) => {
     e.preventDefault();
     setBusy(true);
     setError("");
     try {
-      const { data } = await api.post("/auth/register", form);
+      if (form.role === "provider" && !form.phone.trim()) {
+        throw new Error("Phone number is required for handymen so customers can reach you.");
+      }
+      if (form.role === "provider" && form.coverage.length === 0) {
+        throw new Error("Pick at least one coverage area you can travel to.");
+      }
+      const payload = form.role === "provider"
+        ? form
+        : { name: form.name, email: form.email, password: form.password, phone: form.phone, role: "customer" };
+      const { data } = await api.post("/auth/register", payload);
       setUser(data);
       toast.success("Account created. Welcome to FixiPro!");
       navigate(homeFor(data));
     } catch (err) {
-      setError(errMsg(err, "Registration failed"));
+      setError(err.message || errMsg(err, "Registration failed"));
     } finally {
       setBusy(false);
     }
   };
 
+  const isProvider = form.role === "provider";
+
   return (
-    <AuthShell title="Create your account" sub="Book trusted local handymen — or become one." testid="register-page">
+    <AuthShell title={isProvider ? "Join as a handyman" : "Create your account"}
+      sub={isProvider ? "Free to join. Get verified and start winning local work." : "Book trusted local handymen — or become one."}
+      testid="register-page">
       <form onSubmit={submit} className="space-y-5">
         {error && <div data-testid="register-error" className="border border-destructive/50 bg-destructive/10 text-destructive text-sm px-4 py-3">{error}</div>}
         <div className="grid grid-cols-2 gap-2" data-testid="role-picker">
@@ -191,13 +219,48 @@ export function Register() {
             value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="rounded-2xl h-11" />
         </div>
         <div className="space-y-2">
+          <Label htmlFor="rphone" className="label-caps">
+            Phone number {isProvider ? "(required — shared with customer after payment)" : "(optional)"}
+          </Label>
+          <Input data-testid="register-phone" id="rphone" type="tel" required={isProvider}
+            placeholder="e.g. 07538 624492"
+            value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="rounded-2xl h-11" />
+        </div>
+        <div className="space-y-2">
           <Label htmlFor="rpassword" className="label-caps">Password</Label>
           <Input data-testid="register-password" id="rpassword" type="password" required minLength={8} autoComplete="new-password"
             value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="rounded-2xl h-11" />
           <p className="text-xs text-muted-foreground">Minimum 8 characters.</p>
         </div>
+
+        {isProvider && (
+          <>
+            <div className="space-y-2">
+              <Label className="label-caps">Description of services you offer</Label>
+              <textarea data-testid="register-bio" rows={3} maxLength={500}
+                placeholder="e.g. Gas Safe registered plumber and general handyman covering the Cotswolds. Small repairs to full bathroom installations."
+                value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })}
+                className="w-full rounded-2xl border border-input bg-background px-3 py-2 text-sm" />
+            </div>
+            <div className="space-y-2">
+              <Label className="label-caps">Coverage areas ({form.coverage.length})</Label>
+              <div className="flex flex-wrap gap-2" data-testid="register-coverage">
+                {cities.map((c) => (
+                  <button type="button" key={c} data-testid={`reg-city-${c}`} onClick={() => toggleCoverage(c)}
+                    className={`px-3 py-2 text-sm border rounded-full transition-colors duration-200 ${
+                      form.coverage.includes(c) ? "bg-primary text-primary-foreground border-primary" : "border-border hover:border-foreground/40"}`}>
+                    {c}
+                  </button>
+                ))}
+                {cities.length === 0 && <p className="text-xs text-muted-foreground">Loading coverage areas…</p>}
+              </div>
+              <p className="text-xs text-muted-foreground">Pick everywhere you're happy to travel to.</p>
+            </div>
+          </>
+        )}
+
         <Button data-testid="register-submit" disabled={busy} className="w-full h-11 rounded-2xl bg-accent hover:bg-accent/90 text-white">
-          {busy ? "Creating account…" : "Create account"}
+          {busy ? "Creating account…" : (isProvider ? "Create handyman account" : "Create account")}
         </Button>
         <OrDivider />
         <GoogleButton testid="google-register-btn" role={form.role} />

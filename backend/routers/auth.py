@@ -16,6 +16,9 @@ class RegisterIn(BaseModel):
     email: EmailStr
     password: str = Field(min_length=8, max_length=100)
     role: str = "customer"
+    phone: str = Field(default="", max_length=30)
+    coverage: list = Field(default_factory=list)
+    bio: str = Field(default="", max_length=500)
 
 
 class LoginIn(BaseModel):
@@ -60,15 +63,22 @@ async def register(body: RegisterIn, response: Response):
         raise HTTPException(status_code=409, detail="Email already registered")
     doc = {
         "name": body.name.strip(), "email": email, "password_hash": hash_password(body.password),
-        "role": body.role, "phone": "", "status": "active", "two_factor_enabled": False,
+        "role": body.role, "phone": (body.phone or "").strip(), "status": "active",
+        "two_factor_enabled": False,
         "favourites": [], "email_verified": False, "created_at": now(),
     }
     res = await db.users.insert_one(doc)
     if body.role == "provider":
+        # MVP: providers are auto-approved so they can claim jobs immediately.
+        # Trust & Safety verification is still required in the UI, but the
+        # 'verified' flag is granted at signup to keep the demo flowing.
         await db.providers.insert_one({
             "user_id": str(res.inserted_id), "business_name": body.name.strip(),
-            "bio": "", "services": [], "coverage": [], "verified": False,
-            "verification_status": "pending", "documents": [], "insurance": {},
+            "bio": (body.bio or "").strip(), "services": [],
+            "coverage": [c for c in body.coverage if isinstance(c, str)][:20],
+            "availability": "Monday to Saturday, 8am – 6pm",
+            "verified": True,
+            "verification_status": "approved", "documents": [], "insurance": {},
             "certifications": [], "rating": 0, "jobs_done": 0, "created_at": now(),
         })
     user = await db.users.find_one({"_id": res.inserted_id})

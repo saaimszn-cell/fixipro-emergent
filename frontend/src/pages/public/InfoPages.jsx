@@ -188,24 +188,38 @@ export function Coverage() {
   useEffect(() => { api.get("/coverage").then((r) => setCities(r.data.cities || [])).catch(() => {}); }, []);
   return (
     <div data-testid="coverage-page">
-      <Hero kicker="Where we work" title="Coverage areas" sub="Verified professionals in 20 cities and counting." testid="coverage-hero" />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-20">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3" data-testid="coverage-grid">
+      <Hero kicker="Where we work" title="Coverage areas" sub="FixiPro is live in three UK areas today — with more launching soon." testid="coverage-hero" />
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-20">
+        <div className="grid sm:grid-cols-3 gap-4" data-testid="coverage-grid">
           {cities.map((c) => (
-            <div key={c} className="border border-border bg-card p-5 flex items-center gap-3 transition-colors duration-200 hover:border-accent">
-              <MapPin className="h-4 w-4 text-accent shrink-0" />
-              <span className="font-medium text-sm">{c}</span>
+            <div key={c} data-testid={`coverage-card-${c.toLowerCase()}`}
+              className="border border-border bg-card rounded-2xl soft-card p-6 flex items-center gap-4 transition-[transform,border-color] duration-200 hover:-translate-y-0.5 hover:border-accent">
+              <span className="h-12 w-12 rounded-xl bg-blue-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                <MapPin className="h-6 w-6" />
+              </span>
+              <div>
+                <p className="font-display font-bold text-lg tracking-tight">{c}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Verified local handymen</p>
+              </div>
             </div>
           ))}
         </div>
-        <div className="mt-10 border border-border bg-card p-8 grid lg:grid-cols-12 gap-6 items-center">
-          <div className="lg:col-span-8">
-            <h2 className="font-display font-bold text-2xl">Don't see your city?</h2>
-            <p className="text-muted-foreground mt-2">We're expanding fast. Register anyway — we'll notify you the moment pros go live in your area.</p>
-          </div>
-          <div className="lg:col-span-4 lg:text-right">
-            <Link to="/contact"><Button data-testid="coverage-contact-cta" className="rounded-2xl bg-accent hover:bg-accent/90 text-white">Request your area</Button></Link>
-          </div>
+
+        <div className="mt-10 border-2 border-dashed border-accent/40 bg-accent/5 rounded-2xl p-8 text-center" data-testid="coverage-coming-soon-banner">
+          <p className="label-caps text-accent flex items-center justify-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-accent animate-pulse-dot" /> Expanding fast
+          </p>
+          <p className="font-display font-black text-2xl sm:text-3xl tracking-tight mt-2">
+            Other areas coming soon!
+          </p>
+          <p className="text-sm text-muted-foreground mt-3 max-w-md mx-auto">
+            We're onboarding verified handymen across more UK towns. Register your interest and we'll message you the moment we launch near you.
+          </p>
+          <Link to="/contact">
+            <Button data-testid="coverage-contact-cta" className="mt-6 rounded-full bg-accent hover:bg-accent/90 text-white px-6">
+              Request your area
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

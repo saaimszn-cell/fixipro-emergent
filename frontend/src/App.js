@@ -10,6 +10,7 @@ import ServiceDetail from "./pages/public/ServiceDetail";
 import { HowItWorks, Pricing, FaqPage, About, Coverage, ReviewsPage, BecomeProvider, ComingSoon } from "./pages/public/InfoPages";
 import { BlogList, BlogPost } from "./pages/public/Blog";
 import Contact from "./pages/public/Contact";
+import TrustSafety from "./pages/public/TrustSafety";
 import { LegalPage, NotFound } from "./pages/public/Legal";
 
 import { Login, Register, ForgotPassword, ResetPassword, AuthCallback } from "./pages/auth/AuthPages";
@@ -82,6 +83,8 @@ function AppRouter() {
             <Route path="/blog" element={<BlogList />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/trust" element={<TrustSafety />} />
+            <Route path="/trust-safety" element={<TrustSafety />} />
             <Route path="/legal/:slug" element={<LegalPage />} />
             <Route path="/coming-soon" element={<ComingSoon />} />
             <Route path="*" element={<NotFound />} />

@@ -219,7 +219,8 @@ export default function PublicLayout() {
               <p className="label-caps text-slate-500 mb-4">Legal</p>
               <ul className="space-y-2.5">
                 <li><Link data-testid="footer-privacy" to="/legal/privacy-policy" className="transition-colors duration-200 hover:text-white">Privacy policy</Link></li>
-                <li><Link data-testid="footer-terms" to="/legal/terms" className="transition-colors duration-200 hover:text-white">Terms & conditions</Link></li>
+                <li><Link data-testid="footer-terms" to="/legal/terms" className="transition-colors duration-200 hover:text-white">Terms of Service</Link></li>
+                <li><Link data-testid="footer-trust" to="/trust" className="transition-colors duration-200 hover:text-white">Trust &amp; Safety</Link></li>
                 <li><Link data-testid="footer-cookies" to="/legal/cookies" className="transition-colors duration-200 hover:text-white">Cookie policy</Link></li>
                 <li><Link data-testid="footer-accessibility" to="/legal/accessibility" className="transition-colors duration-200 hover:text-white">Accessibility</Link></li>
               </ul>

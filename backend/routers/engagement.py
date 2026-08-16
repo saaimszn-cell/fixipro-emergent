@@ -64,6 +64,34 @@ async def create_conversation(body: dict, user: dict = Depends(get_current_user)
     other_id = body.get("user_id")
     if not other_id:
         raise HTTPException(status_code=400, detail="user_id required")
+    # Chat is only unlocked between a customer and their claimed handyman
+    # after payment has been confirmed. Admins can chat with anyone.
+    if user["role"] not in ("admin", "super_admin"):
+        # Find any paid job between these two users
+        paid_txn = await db.jobs.aggregate([
+            {"$match": {"$or": [
+                {"customer_id": user["id"], "provider_id": other_id},
+                {"provider_id": user["id"], "customer_id": other_id},
+            ]}},
+            {"$lookup": {"from": "payment_transactions", "localField": "_id",
+                         "foreignField": "job_id", "as": "txn"}},
+        ]).to_list(20)
+        # motor aggregation returns _id as ObjectId, and job_id is stored as string
+        # So above lookup won't match. Do it manually:
+        jobs = await db.jobs.find({"$or": [
+            {"customer_id": user["id"], "provider_id": other_id},
+            {"provider_id": user["id"], "customer_id": other_id},
+        ]}).to_list(20)
+        has_paid = False
+        for j in jobs:
+            txn = await db.payment_transactions.find_one({"job_id": str(j["_id"]),
+                                                          "payment_status": "paid"})
+            if txn:
+                has_paid = True
+                break
+        if not has_paid:
+            raise HTTPException(status_code=403,
+                                detail="You can only chat with a handyman/customer after payment is confirmed.")
     existing = await db.conversations.find_one({"participants": {"$all": [user["id"], other_id]}})
     if existing:
         return serialize(existing)

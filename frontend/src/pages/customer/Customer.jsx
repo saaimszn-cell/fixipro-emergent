@@ -84,20 +84,26 @@ export function NewRequest() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const [services, setServices] = useState([]);
+  const [cities, setCities] = useState([]);
   const [form, setForm] = useState({
     service_id: params.get("service") || "", title: "", description: "",
-    postcode: "", city: "", urgency: "flexible", preferred_date: "",
+    postcode: "", city: "", address: "", budget: "",
+    urgency: "flexible", preferred_date: "",
   });
   const [busy, setBusy] = useState(false);
 
-  useEffect(() => { api.get("/services").then((r) => setServices(r.data)).catch(() => {}); }, []);
+  useEffect(() => {
+    api.get("/services").then((r) => setServices(r.data)).catch(() => {});
+    api.get("/coverage").then((r) => setCities(r.data.cities || [])).catch(() => {});
+  }, []);
 
   const submit = async (e) => {
     e.preventDefault();
     setBusy(true);
     try {
-      const { data } = await api.post("/requests", form);
-      toast.success("Request posted. Pros are being notified!");
+      const payload = { ...form, budget: parseFloat(form.budget) };
+      const { data } = await api.post("/requests", payload);
+      toast.success("Job posted — verified handymen nearby have been notified.");
       navigate(`/dashboard/requests/${data.id}`);
     } catch (err) {
       toast.error(errMsg(err));
@@ -107,14 +113,14 @@ export function NewRequest() {
 
   return (
     <div data-testid="new-request-page" className="max-w-2xl">
-      <PageHeader title="Post a job" sub="Describe the work — matching pros will quote within hours." />
+      <PageHeader title="Post a job" sub="Describe the work — the first verified handyman in your area can claim it instantly." />
       <form onSubmit={submit} className="border border-border bg-card p-6 sm:p-8 space-y-5">
         <div className="space-y-2">
           <Label className="label-caps">Service</Label>
           <Select value={form.service_id} onValueChange={(v) => setForm({ ...form, service_id: v })} required>
             <SelectTrigger data-testid="req-service" className="rounded-none h-11"><SelectValue placeholder="Choose a service…" /></SelectTrigger>
             <SelectContent>
-              {services.map((s) => <SelectItem key={s.id} value={s.id}>{s.name} — custom quotes</SelectItem>)}
+              {services.map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
@@ -126,20 +132,42 @@ export function NewRequest() {
         <div className="space-y-2">
           <Label className="label-caps">Description</Label>
           <Textarea data-testid="req-description" required minLength={10} rows={5}
-            placeholder="What's wrong, where, access details, anything the pro should know…"
+            placeholder="What's wrong, where, access details, anything the handyman should know…"
             value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="rounded-none" />
+        </div>
+        <div className="space-y-2">
+          <Label className="label-caps">Full address (revealed to the handyman only after you pay)</Label>
+          <Input data-testid="req-address" required minLength={4} maxLength={200}
+            placeholder="12 Rowan Way, Innsworth" value={form.address}
+            onChange={(e) => setForm({ ...form, address: e.target.value })} className="rounded-none h-11" />
+          <p className="text-xs text-muted-foreground">
+            Handymen see only the city and postcode until you accept and pay. After payment your full address becomes visible to the assigned handyman.
+          </p>
         </div>
         <div className="grid sm:grid-cols-2 gap-5">
           <div className="space-y-2">
             <Label className="label-caps">Postcode</Label>
-            <Input data-testid="req-postcode" required placeholder="E1 6AN" value={form.postcode}
+            <Input data-testid="req-postcode" required placeholder="GL3 1DP" value={form.postcode}
               onChange={(e) => setForm({ ...form, postcode: e.target.value })} className="rounded-none h-11" />
           </div>
           <div className="space-y-2">
-            <Label className="label-caps">City</Label>
-            <Input data-testid="req-city" placeholder="London" value={form.city}
-              onChange={(e) => setForm({ ...form, city: e.target.value })} className="rounded-none h-11" />
+            <Label className="label-caps">City / Area</Label>
+            <Select value={form.city} onValueChange={(v) => setForm({ ...form, city: v })}>
+              <SelectTrigger data-testid="req-city" className="rounded-none h-11"><SelectValue placeholder="Pick your area…" /></SelectTrigger>
+              <SelectContent>
+                {cities.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
+        </div>
+        <div className="space-y-2">
+          <Label className="label-caps">Your budget (£)</Label>
+          <Input data-testid="req-budget" type="number" min="1" step="0.01" required
+            placeholder="e.g. 120" value={form.budget}
+            onChange={(e) => setForm({ ...form, budget: e.target.value })} className="rounded-none h-11" />
+          <p className="text-xs text-muted-foreground">
+            The first handyman who claims your job accepts this price. You pay only this amount — the handyman receives 85% after our 15% platform fee.
+          </p>
         </div>
         <div className="grid sm:grid-cols-2 gap-5">
           <div className="space-y-2">
@@ -160,7 +188,7 @@ export function NewRequest() {
           </div>
         </div>
         <Button data-testid="req-submit" type="submit" disabled={busy} className="rounded-none h-11 px-8 bg-accent hover:bg-accent/90 text-white">
-          {busy ? "Posting…" : "Post request"}
+          {busy ? "Posting…" : "Post job"}
         </Button>
       </form>
     </div>

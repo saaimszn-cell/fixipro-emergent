@@ -25,7 +25,7 @@ async def profile(user: dict = Depends(provider_only)):
 @router.put("/profile")
 async def update_profile(body: dict, user: dict = Depends(provider_only)):
     allowed = {}
-    for k in ("business_name", "bio"):
+    for k in ("business_name", "bio", "availability"):
         if isinstance(body.get(k), str):
             allowed[k] = body[k]
     for k in ("services", "coverage", "certifications"):
