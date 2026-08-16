@@ -17,41 +17,57 @@ class ContactIn(BaseModel):
 
 
 async def _send_email_outbox(to: str, subject: str, body: str, meta: dict = None):
-    """Persist outbound email to Mongo (real SMTP integration point).
-
-    TO GO LIVE with real email: set SMTP_HOST / SMTP_USER / SMTP_PASS / SMTP_FROM
-    in backend/.env and swap this stub for aiosmtplib or a transactional API
-    (SendGrid, Postmark, Mailgun, AWS SES). The message is already validated,
-    sanitised & rate-limited before it reaches here."""
+    """Persist outbound email to Mongo, and actually send it via Resend when
+    RESEND_API_KEY is configured in backend/.env. Falls back to SMTP if set,
+    otherwise just queues (visible to admins in the comms hub / contact list)."""
+    import os as _os
     doc = {"to": to, "subject": subject, "body": body, "meta": meta or {},
            "status": "queued", "created_at": now()}
-    # If SMTP credentials are configured, try to send in the background
-    smtp_host = __import__("os").environ.get("SMTP_HOST", "").strip()
-    if smtp_host:
+
+    resend_key = _os.environ.get("RESEND_API_KEY", "").strip()
+    if resend_key:
         try:
-            import smtplib
-            import ssl
-            from email.mime.text import MIMEText
-            import os as _os
-            smtp_user = _os.environ.get("SMTP_USER", "")
-            smtp_pass = _os.environ.get("SMTP_PASS", "")
-            smtp_from = _os.environ.get("SMTP_FROM", smtp_user or "no-reply@fixipro.local")
-            smtp_port = int(_os.environ.get("SMTP_PORT", "587"))
-            msg = MIMEText(body, "plain", "utf-8")
-            msg["Subject"] = subject
-            msg["From"] = smtp_from
-            msg["To"] = to
-            ctx = ssl.create_default_context()
-            with smtplib.SMTP(smtp_host, smtp_port, timeout=15) as server:
-                server.starttls(context=ctx)
-                if smtp_user:
-                    server.login(smtp_user, smtp_pass)
-                server.sendmail(smtp_from, [to], msg.as_string())
+            import asyncio
+            import resend
+            resend.api_key = resend_key
+            sender = _os.environ.get("SENDER_EMAIL", "onboarding@resend.dev")
+            html = f"<pre style='font-family:inherit;white-space:pre-wrap'>{body}</pre>"
+            result = await asyncio.to_thread(resend.Emails.send, {
+                "from": f"FixiPro <{sender}>", "to": [to], "subject": subject, "html": html,
+            })
             doc["status"] = "sent"
             doc["sent_at"] = now()
+            doc["provider"] = "resend"
+            doc["provider_id"] = result.get("id") if isinstance(result, dict) else None
         except Exception as e:
             doc["status"] = "failed"
             doc["error"] = str(e)[:400]
+    else:
+        smtp_host = _os.environ.get("SMTP_HOST", "").strip()
+        if smtp_host:
+            try:
+                import smtplib
+                import ssl
+                from email.mime.text import MIMEText
+                smtp_user = _os.environ.get("SMTP_USER", "")
+                smtp_pass = _os.environ.get("SMTP_PASS", "")
+                smtp_from = _os.environ.get("SMTP_FROM", smtp_user or "no-reply@fixipro.local")
+                smtp_port = int(_os.environ.get("SMTP_PORT", "587"))
+                msg = MIMEText(body, "plain", "utf-8")
+                msg["Subject"] = subject
+                msg["From"] = smtp_from
+                msg["To"] = to
+                ctx = ssl.create_default_context()
+                with smtplib.SMTP(smtp_host, smtp_port, timeout=15) as server:
+                    server.starttls(context=ctx)
+                    if smtp_user:
+                        server.login(smtp_user, smtp_pass)
+                    server.sendmail(smtp_from, [to], msg.as_string())
+                doc["status"] = "sent"
+                doc["sent_at"] = now()
+            except Exception as e:
+                doc["status"] = "failed"
+                doc["error"] = str(e)[:400]
     await db.email_outbox.insert_one(doc)
 
 
@@ -150,7 +166,8 @@ async def integrations(user: dict = Depends(get_current_user)):
         "whatsapp": {"connected": state.get("connected", False), "mode": "stub",
                      "note": "Live WhatsApp Business API connection is stubbed for internal testing. UI and logs are fully functional.",
                      "phone_number": state.get("phone_number", ""), "business_name": "FixiPro UK"},
-        "email": {"connected": True, "provider": "Transactional email (internal)"},
+        "email": {"connected": bool(__import__("os").environ.get("RESEND_API_KEY", "").strip()),
+                  "provider": "Resend" if __import__("os").environ.get("RESEND_API_KEY", "").strip() else "Not connected — add RESEND_API_KEY in backend/.env"},
         "sms": {"connected": False, "mode": "stub", "note": "SMS sending stubbed for internal testing."},
         "push": {"connected": False, "mode": "stub", "note": "Push notifications stubbed for internal testing."},
     }

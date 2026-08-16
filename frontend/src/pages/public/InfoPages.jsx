@@ -4,7 +4,7 @@ import api from "../../lib/api";
 import { Button } from "../../components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../components/ui/accordion";
 import { motion } from "framer-motion";
-import { ArrowRight, BadgeCheck, CheckCircle2, CreditCard, FileText, MapPin, Search, ShieldCheck, Star, UserCheck, Wallet, CalendarClock, TrendingUp } from "lucide-react";
+import { ArrowRight, BadgeCheck, CheckCircle2, CreditCard, FileText, MapPin, Search, ShieldCheck, Star, UserCheck, Wallet, CalendarClock, TrendingUp, KeyRound } from "lucide-react";
 
 function Hero({ kicker, title, sub, testid, titleClass = "" }) {
   return (
@@ -20,15 +20,15 @@ export function HowItWorks() {
   const navigate = useNavigate();
   return (
     <div data-testid="how-it-works-page">
-      <Hero kicker="The process" title="How FixiPro works" titleClass="whitespace-nowrap !text-[26px] sm:!text-4xl lg:!text-5xl !max-w-none" sub="From leaky tap to five-star review in three steps — for customers and handymen alike." testid="hiw-hero" />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-20 grid lg:grid-cols-2 gap-12">
+      <Hero kicker="The process" title="How FixiPro works" titleClass="whitespace-nowrap !text-[26px] sm:!text-4xl lg:!text-5xl !max-w-none" sub="From leaky tap to five-star review in five steps — for customers and handymen alike." testid="hiw-hero" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-12 grid lg:grid-cols-2 gap-12">
         <div>
           <h2 className="font-display font-bold text-2xl mb-6">For customers</h2>
           {[
-            { icon: FileText, t: "Post your job", d: "Describe the work, add photos in your head, set your postcode and preferred date." },
-            { icon: Search, t: "Get matched", d: "Our AI matching notifies verified handymen covering your area and trade." },
-            { icon: CreditCard, t: "Accept & pay", d: "Compare live quotes side by side, chat with handymen, then pay securely by card." },
-            { icon: Star, t: "Review the work", d: "Rate your experience — reviews keep the marketplace honest." },
+            { icon: FileText, t: "Post your job", d: "Describe the work, add your postcode, budget and preferred date." },
+            { icon: Search, t: "A handyman claims it", d: "Verified local handymen see your job and the first to claim it locks it in." },
+            { icon: CreditCard, t: "Pay securely", d: "Pay the agreed budget by card. FixiPro holds the money in escrow — the handyman is not paid yet." },
+            { icon: Star, t: "Review the work", d: "Once you've handed over your code, rate your experience — reviews keep the marketplace honest." },
           ].map((s, i) => (
             <motion.div key={s.t} initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
               className="flex gap-4 border-l-2 border-accent pl-5 py-4">
@@ -47,9 +47,9 @@ export function HowItWorks() {
           <h2 className="font-display font-bold text-2xl mb-6">For handymen</h2>
           {[
             { icon: UserCheck, t: "Get verified", d: "Upload ID, insurance and certifications. Approval typically within 48 hours." },
-            { icon: CalendarClock, t: "Set your availability", d: "Control your calendar and the areas you cover." },
-            { icon: FileText, t: "Quote on local jobs", d: "Browse requests matched to your trade and send competitive custom quotes — AI can help draft them." },
-            { icon: Wallet, t: "Get paid", d: "Earnings land in your wallet on completion. Withdraw any time over £10." },
+            { icon: CalendarClock, t: "Claim local jobs", d: "Browse open jobs matched to your trade and coverage area — first to claim gets it, at the customer's budget." },
+            { icon: MapPin, t: "Address unlocks on payment", d: "The customer's exact address and phone number only appear once their payment clears." },
+            { icon: Wallet, t: "Enter the code, get paid", d: "Finish the job, get the customer's 6-digit code, and your 85% payout lands in your wallet instantly." },
           ].map((s, i) => (
             <motion.div key={s.t} initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
               className="flex gap-4 border-l-2 border-primary pl-5 py-4">
@@ -63,6 +63,35 @@ export function HowItWorks() {
           <Button data-testid="hiw-join-provider" variant="outline" onClick={() => navigate("/become-provider")} className="mt-6 rounded-2xl h-11">
             Join as a handyman <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
+        </div>
+      </div>
+
+      {/* The completion code, spelled out clearly on its own — this is the crux of the escrow flow */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-20">
+        <div className="border-2 border-accent bg-accent/5 rounded-2xl p-6 sm:p-10" data-testid="hiw-code-explainer">
+          <p className="label-caps text-accent flex items-center gap-2">
+            <KeyRound className="h-4 w-4" /> The completion code — how your money stays safe
+          </p>
+          <h2 className="font-display font-extrabold text-2xl sm:text-3xl tracking-tight mt-2 max-w-2xl">
+            One 6-digit code is what actually releases payment.
+          </h2>
+          <div className="grid sm:grid-cols-3 gap-4 mt-8">
+            {[
+              { n: "1", t: "You pay, a code appears", d: "The moment your payment clears, a unique 6-digit code shows up on your job page. Only you can see it." },
+              { n: "2", t: "The handyman does the job", d: "They cannot see this code. Your money sits safely in escrow the entire time they're working." },
+              { n: "3", t: "You hand it over, they get paid", d: "Only when you're happy, read the code out loud. The handyman types it in and their payout is released instantly." },
+            ].map((s) => (
+              <div key={s.n} className="border border-accent/30 bg-card rounded-xl p-5" data-testid={`hiw-code-step-${s.n}`}>
+                <p className="font-display font-black text-2xl text-accent">{s.n}</p>
+                <p className="font-semibold text-sm mt-2">{s.t}</p>
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{s.d}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-sm text-muted-foreground mt-6">
+            No code, no payout — that's the whole point. If the work isn't finished properly, don't give the code out.
+            <Link to="/trust-safety" className="text-accent font-medium hover:underline ml-1">Read more on Trust & Safety →</Link>
+          </p>
         </div>
       </div>
     </div>

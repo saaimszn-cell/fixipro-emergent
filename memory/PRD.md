@@ -57,8 +57,17 @@ Complete marketplace website (development + internal testing only; excludes live
 - P2: Real email sending (Resend managed), real 2FA OTP codes, session management list/revoke UI, WhatsApp live API credentials, pagination on admin lists, media library uploads (object storage)
 - P3: Homepage builder, automation centre, fraud detection, backup/restore UI, monitoring dashboards
 
+## Update 2026-08-16 (iteration 5 — verified 16/16 backend)
+- Explored codebase and found most of Saaim's requested items (reviews after code entry, T&C/Privacy real content, 42-category Services page w/ car-service #2 & pharmacy #3, escrow completion-code flow) were ALREADY implemented from a prior "FixiPro Marketplace Overhaul Complete" commit not reflected in this file — confirmed via code read + testing_agent, not rebuilt
+- Real email sending wired: Resend API integrated in comms.py `_send_email_outbox` (RESEND_API_KEY + SENDER_EMAIL in backend/.env). Contact form (POST /api/comms/contact) now attempts real delivery, logs status/error to db.email_outbox
+- CAVEAT: Resend account is in sandbox mode — can only deliver to the account owner's own verified email, not hello.fixipro@gmail.com. User must verify a domain at resend.com/domains for real delivery to the support inbox
+- How It Works page (InfoPages.jsx) rewritten with an explicit `hiw-code-explainer` section spelling out the 6-digit completion code / escrow release flow step by step
+- Verified via Playwright + curl: registration (customer & provider) and login both work end-to-end (cookie session persists, /auth/me succeeds) — no repro of user's reported login/signup bug
+- testing_agent iteration 5: 16/16 backend pytest (rewritten suite in backend_test.py for current 42-cat state), frontend spot-checks all pass, zero bugs found
+
 ## Next Tasks
-1. Interactive E2E of payment + review flows; AI stream verification
-2. Address book + activity history (customer scope items)
-3. Wire Resend for forgot-password emails
-4. Production readiness pass (deployment is explicitly out of scope until requested)
+1. User to verify a domain at resend.com/domains so contact-form emails actually land in hello.fixipro@gmail.com (currently sandboxed)
+2. Stripe Connect real payments (explicitly deferred by user — "ill do that in future")
+3. WhatsApp live API (explicitly deferred by user — "forget about the whatsapp stuff")
+4. Address book + activity history (customer scope items)
+5. Production readiness pass (deployment is explicitly out of scope until requested)
