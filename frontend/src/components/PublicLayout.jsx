@@ -45,7 +45,7 @@ export function Logo({ light }) {
       </span>
       <span className="leading-none">
         <span className={`block font-display font-extrabold text-lg tracking-tight ${light ? "text-white" : ""}`}>
-          FixiPro<span className="text-accent">.co.uk</span>
+          Fixi<span className="text-accent">Pro</span>
         </span>
         <span className={`block text-[9px] font-bold tracking-[0.25em] mt-0.5 ${light ? "text-white/60" : "text-muted-foreground"}`}>UK MARKETPLACE</span>
       </span>
@@ -226,7 +226,7 @@ export default function PublicLayout() {
             </div>
           </div>
           <div className="border-t border-white/10 mt-14 pt-8 flex flex-wrap items-center justify-between gap-4 text-xs text-slate-500">
-            <p>© 2026 FixiPro Ltd · fixipro.co.uk · Internal testing build — not for production use.</p>
+            <p>© 2026 FixiPro Ltd · Internal testing build — not for production use.</p>
             <p>Made for UK homes.</p>
           </div>
         </div>
