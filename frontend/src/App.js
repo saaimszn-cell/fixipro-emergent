@@ -7,7 +7,7 @@ import PortalLayout from "./components/PortalLayout";
 import Home from "./pages/public/Home";
 import ServicesPage from "./pages/public/Services";
 import ServiceDetail from "./pages/public/ServiceDetail";
-import { HowItWorks, Pricing, FaqPage, About, Coverage, ReviewsPage, BecomeProvider, ComingSoon } from "./pages/public/InfoPages";
+import { HowItWorks, Pricing, FaqPage, About, Coverage, ReviewsPage, BecomeProvider, ComingSoon, CompletionCodePage } from "./pages/public/InfoPages";
 import { BlogList, BlogPost } from "./pages/public/Blog";
 import Contact from "./pages/public/Contact";
 import TrustSafety from "./pages/public/TrustSafety";
@@ -74,6 +74,7 @@ function AppRouter() {
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/services/:slug" element={<ServiceDetail />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
+            <Route path="/the-code" element={<CompletionCodePage />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/faq" element={<FaqPage />} />
             <Route path="/about" element={<About />} />

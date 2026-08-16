@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import api, { errMsg, fmtDate, fmtGBP } from "../../lib/api";
 import { useAuth } from "../../context/AuthContext";
 import { Button } from "../../components/ui/button";
-import { StatusBadge, PageHeader } from "../../components/shared";
+import { StatusBadge, PageHeader, RatingBadge } from "../../components/shared";
 import { toast } from "sonner";
 import { CreditCard, MapPin, CalendarDays, KeyRound, Copy, MessageSquare, Phone, Lock } from "lucide-react";
 
@@ -91,6 +91,13 @@ export default function RequestDetail({ providerView = false }) {
               {req.budget > 0 && <span>Budget: <strong className="text-foreground">{fmtGBP(req.budget)}</strong></span>}
               <span className="capitalize">Urgency: {req.urgency}</span>
             </div>
+
+            {isCustomer && req.claimed_by && req.provider_name && (
+              <div className="mt-4 flex items-center gap-3" data-testid="claimed-provider-info">
+                <span className="text-sm">Claimed by <strong>{req.provider_name}</strong></span>
+                <RatingBadge testid="provider-rating-badge" rating={req.provider_rating} count={req.provider_jobs_done} />
+              </div>
+            )}
 
             {/* Address section — visible to customer always, to provider only after payment */}
             {(isCustomer || isMyClaim) && (

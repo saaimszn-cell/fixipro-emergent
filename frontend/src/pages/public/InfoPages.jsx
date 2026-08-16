@@ -16,6 +16,59 @@ function Hero({ kicker, title, sub, testid, titleClass = "" }) {
   );
 }
 
+export function CompletionCodePage() {
+  const navigate = useNavigate();
+  return (
+    <div data-testid="completion-code-page">
+      <Hero kicker="Escrow, explained" title="The completion code" sub="One 6-digit number is the entire reason your money is safe on FixiPro. Here's exactly how it works, start to finish." testid="ccp-hero" />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-8">
+        <div className="grid sm:grid-cols-4 gap-4">
+          {[
+            { n: "1", t: "You pay", d: "The moment your card payment clears, FixiPro holds the full amount in escrow — the handyman hasn't been paid a penny yet." },
+            { n: "2", t: "A code appears", d: "A unique, randomly generated 6-digit code shows up only on your job page. The handyman cannot see it, guess it, or generate it themselves." },
+            { n: "3", t: "Work gets done", d: "The handyman completes the job at your property. Your money sits safely in escrow the entire time — untouched." },
+            { n: "4", t: "You hand it over", d: "Happy with the work? Read the code out loud to the handyman. They type it into their dashboard and are paid instantly — 85% to them, 15% platform fee to FixiPro." },
+          ].map((s) => (
+            <motion.div key={s.n} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: Number(s.n) * 0.07 }}
+              className="border-2 border-accent/30 bg-card rounded-2xl p-5" data-testid={`ccp-step-${s.n}`}>
+              <p className="font-display font-black text-3xl text-accent">{s.n}</p>
+              <p className="font-semibold text-sm mt-3">{s.t}</p>
+              <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">{s.d}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="mt-10 border border-border bg-card rounded-2xl p-6 sm:p-8">
+          <h2 className="font-display font-bold text-xl mb-5">Common questions about the code</h2>
+          <div className="space-y-5 text-sm">
+            {[
+              { q: "What if the work isn't finished properly?", a: "Don't give out the code. Your payment stays in escrow. Contact our Trust & Safety team from the Trust & Safety page and we'll mediate, and can refund you." },
+              { q: "Can the handyman see or guess my code?", a: "No. The code is only ever shown to you, the customer, and is never sent to the handyman by FixiPro. It's stored as a one-way hash on our servers — even we can't read it back out." },
+              { q: "What happens after 5 wrong attempts?", a: "The code entry locks for 30 minutes to stop guessing. Ask the customer to double-check the digits before trying again." },
+              { q: "What if I lose the code?", a: "It's always visible on your request page in your dashboard while the job is unpaid-for-completion — just log back in and open the job." },
+              { q: "Where does the money go after I give the code?", a: "85% is released instantly to the handyman's wallet, which they withdraw via Stripe. 15% is FixiPro's platform fee for running the marketplace, verification and support." },
+            ].map((f) => (
+              <div key={f.q} data-testid={`ccp-faq-${f.q.slice(0, 10)}`}>
+                <p className="font-semibold">{f.q}</p>
+                <p className="text-muted-foreground mt-1">{f.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Button data-testid="ccp-post-job" onClick={() => navigate("/register")} className="rounded-2xl bg-accent hover:bg-accent/90 text-white h-11">
+            Post a job <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+          <Button data-testid="ccp-trust-link" variant="outline" onClick={() => navigate("/trust-safety")} className="rounded-2xl h-11">
+            Read Trust &amp; Safety
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function HowItWorks() {
   const navigate = useNavigate();
   return (
@@ -66,33 +119,24 @@ export function HowItWorks() {
         </div>
       </div>
 
-      {/* The completion code, spelled out clearly on its own — this is the crux of the escrow flow */}
+      {/* Teaser for the dedicated completion-code page — this is the crux of the escrow flow */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-20">
-        <div className="border-2 border-accent bg-accent/5 rounded-2xl p-6 sm:p-10" data-testid="hiw-code-explainer">
+        <Link to="/the-code" data-testid="hiw-code-explainer"
+          className="block border-2 border-accent bg-accent/5 rounded-2xl p-6 sm:p-10 transition-colors duration-200 hover:bg-accent/10">
           <p className="label-caps text-accent flex items-center gap-2">
             <KeyRound className="h-4 w-4" /> The completion code — how your money stays safe
           </p>
           <h2 className="font-display font-extrabold text-2xl sm:text-3xl tracking-tight mt-2 max-w-2xl">
             One 6-digit code is what actually releases payment.
           </h2>
-          <div className="grid sm:grid-cols-3 gap-4 mt-8">
-            {[
-              { n: "1", t: "You pay, a code appears", d: "The moment your payment clears, a unique 6-digit code shows up on your job page. Only you can see it." },
-              { n: "2", t: "The handyman does the job", d: "They cannot see this code. Your money sits safely in escrow the entire time they're working." },
-              { n: "3", t: "You hand it over, they get paid", d: "Only when you're happy, read the code out loud. The handyman types it in and their payout is released instantly." },
-            ].map((s) => (
-              <div key={s.n} className="border border-accent/30 bg-card rounded-xl p-5" data-testid={`hiw-code-step-${s.n}`}>
-                <p className="font-display font-black text-2xl text-accent">{s.n}</p>
-                <p className="font-semibold text-sm mt-2">{s.t}</p>
-                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{s.d}</p>
-              </div>
-            ))}
-          </div>
-          <p className="text-sm text-muted-foreground mt-6">
-            No code, no payout — that's the whole point. If the work isn't finished properly, don't give the code out.
-            <Link to="/trust-safety" className="text-accent font-medium hover:underline ml-1">Read more on Trust & Safety →</Link>
+          <p className="text-sm text-muted-foreground mt-3 max-w-2xl leading-relaxed">
+            You pay, a code appears on your dashboard. The handyman does the job without ever seeing it.
+            Only when you're happy do you read it out — they type it in and get paid instantly. No code, no payout.
           </p>
-        </div>
+          <span className="inline-flex items-center gap-1.5 text-accent font-semibold text-sm mt-4">
+            See the full walkthrough <ArrowRight className="h-4 w-4" />
+          </span>
+        </Link>
       </div>
     </div>
   );

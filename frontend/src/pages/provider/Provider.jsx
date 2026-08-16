@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
 import { Calendar } from "../../components/ui/calendar";
-import { StatusBadge, StatCard, EmptyState, PageHeader } from "../../components/shared";
+import { StatusBadge, StatCard, EmptyState, PageHeader, RatingBadge } from "../../components/shared";
 import { toast } from "sonner";
 import { Briefcase, Wallet, Star, FileText, ArrowRight, ShieldCheck, Upload, Plus } from "lucide-react";
 
@@ -443,7 +443,9 @@ export function ProviderProfile() {
 
   return (
     <div data-testid="provider-profile-page" className="max-w-3xl">
-      <PageHeader title="Business profile" sub="This is what customers see when you claim their job." />
+      <PageHeader title="Business profile" sub="This is what customers see when you claim their job.">
+        <RatingBadge testid="own-rating-badge" rating={profile.rating} count={profile.jobs_done} />
+      </PageHeader>
       <form onSubmit={save} className="border border-border bg-card p-6 sm:p-8 space-y-6">
         <div className="space-y-2">
           <Label className="label-caps">Business name</Label>

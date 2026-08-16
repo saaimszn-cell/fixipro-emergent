@@ -42,6 +42,39 @@ def test_categories_are_42_with_correct_order():
     assert "pharmacy-prescription-services" in slugs[:3], f"pharmacy not in first 3: {slugs[:3]}"
 
 
+EXPECTED_SERVICE_COUNTS = {
+    "general-handyman-home-repairs": 24,
+    "door-to-door-mobile-car-service": 39,
+    "pharmacy-prescription-services": 6,
+    "doors-locks-security": 25,
+    "windows-glazing": 17,
+    "bathroom-services": 29,
+    "kitchen-services": 23,
+    "plumbing-services": 20,
+    "electrical-services": 15,
+    "painting-decorating": 18,
+    "flooring-services": 15,
+    "carpentry-woodwork": 14,
+    "garden-outdoor-services": 22,
+    "pressure-power-washing": 25,
+    "future-marketplace-services": 22,
+}
+
+
+def test_categories_services_list_counts_and_specific_items():
+    """Iter6: verify full-catalogue services_list counts + specific items."""
+    r = requests.get(f"{API}/categories", timeout=15)
+    assert r.status_code == 200
+    cats = {c["slug"]: c for c in r.json()}
+    for slug, expected in EXPECTED_SERVICE_COUNTS.items():
+        assert slug in cats, f"missing category {slug}"
+        got = cats[slug].get("services_list") or []
+        assert len(got) == expected, f"{slug} expected {expected} services, got {len(got)}"
+    assert "Home Fixture Replacement" in cats["general-handyman-home-repairs"]["services_list"]
+    assert "Van Cleaning" in cats["door-to-door-mobile-car-service"]["services_list"]
+    assert "Managed Property Maintenance Services" in cats["future-marketplace-services"]["services_list"]
+
+
 def test_services_catalog():
     r = requests.get(f"{API}/services", timeout=15)
     assert r.status_code == 200
@@ -242,3 +275,16 @@ def test_e2e_chat_allowed_after_payment(escrow_flow):
     prov_me = ps.get(f"{API}/auth/me", timeout=15).json()
     r = cs.post(f"{API}/conversations", json={"user_id": prov_me["id"]}, timeout=15)
     assert r.status_code == 200, f"chat should be allowed post-payment: {r.status_code} {r.text}"
+
+
+def test_request_detail_exposes_provider_rating_to_customer(escrow_flow):
+    """Iter6: after claim, customer's GET /requests/:id should include provider name + rating fields."""
+    cs = escrow_flow["cs"]
+    req_id = escrow_flow["req_id"]
+    r = cs.get(f"{API}/requests/{req_id}", timeout=15)
+    assert r.status_code == 200
+    d = r.json()
+    # These keys must exist once claimed (regardless of numeric value)
+    assert "provider_rating" in d, f"provider_rating missing from request detail: {list(d.keys())}"
+    assert "provider_jobs_done" in d, f"provider_jobs_done missing from request detail: {list(d.keys())}"
+    assert d.get("provider_id") or d.get("provider_name"), "provider info missing after claim"

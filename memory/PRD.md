@@ -65,6 +65,13 @@ Complete marketplace website (development + internal testing only; excludes live
 - Verified via Playwright + curl: registration (customer & provider) and login both work end-to-end (cookie session persists, /auth/me succeeds) — no repro of user's reported login/signup bug
 - testing_agent iteration 5: 16/16 backend pytest (rewritten suite in backend_test.py for current 42-cat state), frontend spot-checks all pass, zero bugs found
 
+## Update 2026-08-16 (iteration 6 — verified 18/18 backend)
+- Expanded all 42 categories' services_list in seed.py to the FULL master catalogue the user provided (was previously trimmed in 14 categories) — exact counts verified via API: general-handyman=24, car-service=39, pharmacy=6, doors-locks=25, windows=17, bathroom=29, kitchen=23, plumbing=20, electrical=15, painting=18, flooring=15, carpentry=14, garden=22, pressure-washing=25, future-marketplace=22 (rest already complete)
+- Added standalone `/the-code` page (CompletionCodePage in InfoPages.jsx) with 4-step walkthrough + FAQ, linked from top nav ("The Code") and footer; How It Works page now shows a compact teaser card linking to it
+- Added `RatingBadge` component (components/shared.jsx) — shown on customer's RequestDetail once a handyman claims their job, and on the handyman's own Business Profile page
+- Bug found+fixed by testing_agent: Provider.jsx was missing RatingBadge in its shared.jsx import, causing /pro/profile to crash — fixed, verified rendering with live rating "4.8 (2 jobs)"
+- Re-verified already-built features per user's repeated request: address field on job posting (hidden until paid), handyman bio/description field, coverage page (3 cities + coming soon), Terms/Privacy/Trust content — all confirmed working, no changes needed
+
 ## Next Tasks
 1. User to verify a domain at resend.com/domains so contact-form emails actually land in hello.fixipro@gmail.com (currently sandboxed)
 2. Stripe Connect real payments (explicitly deferred by user — "ill do that in future")

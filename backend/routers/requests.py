@@ -150,6 +150,10 @@ async def request_detail(request_id: str, user: dict = Depends(get_current_user)
             req["provider_name"] = provider_user.get("name", "")
             # Only reveal provider phone after payment
             req["provider_phone"] = provider_user.get("phone", "") if paid else ""
+        provider_profile = await db.providers.find_one({"user_id": req["claimed_by"]})
+        if provider_profile:
+            req["provider_rating"] = provider_profile.get("rating", 0)
+            req["provider_jobs_done"] = provider_profile.get("jobs_done", 0)
 
     # Return completion code (plaintext) ONLY to the customer, ONLY after payment
     if is_customer and req.get("job") and paid:

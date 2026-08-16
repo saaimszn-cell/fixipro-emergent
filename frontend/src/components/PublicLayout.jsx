@@ -31,6 +31,7 @@ export function ThemeToggle() {
 
 const NAV = [
   { to: "/how-it-works", label: "How It Works" },
+  { to: "/the-code", label: "The Code" },
   { to: "/become-provider", label: "Handyman" },
   { to: "/pricing", label: "Pricing" },
   { to: "/about", label: "About Us" },
@@ -212,6 +213,7 @@ export default function PublicLayout() {
               <ul className="space-y-2.5">
                 <li><Link data-testid="footer-become-provider" to="/become-provider" className="transition-colors duration-200 hover:text-white">Become a Handyman</Link></li>
                 <li><Link data-testid="footer-how-it-works" to="/how-it-works" className="transition-colors duration-200 hover:text-white">How it works</Link></li>
+                <li><Link data-testid="footer-the-code" to="/the-code" className="transition-colors duration-200 hover:text-white">The completion code</Link></li>
                 <li><Link data-testid="footer-faq" to="/faq" className="transition-colors duration-200 hover:text-white">FAQ</Link></li>
               </ul>
             </div>

@@ -1,6 +1,18 @@
 import { Badge } from "./ui/badge";
 import { Card, CardContent } from "./ui/card";
-import { Inbox } from "lucide-react";
+import { Inbox, Star } from "lucide-react";
+
+export function RatingBadge({ rating, count, testid = "rating-badge" }) {
+  const r = Number(rating) || 0;
+  return (
+    <span data-testid={testid}
+      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 dark:bg-amber-950/30 dark:border-amber-800">
+      <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+      <span className="font-bold text-sm">{r > 0 ? r.toFixed(1) : "New"}</span>
+      {count != null && <span className="text-xs text-muted-foreground">({count} job{count === 1 ? "" : "s"})</span>}
+    </span>
+  );
+}
 
 const TONES = {
   open: "bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-blue-200",
